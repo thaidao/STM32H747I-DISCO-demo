@@ -106,7 +106,37 @@ osThreadId VoltageSensTskHandle;
 osThreadId PCurrentSensTskHandle;
 osThreadId PumpControlTskHandle;   uint8_t cec_receive_buffer[16];
 /* USER CODE BEGIN PV */
+#define LD1_GPIO_PORT                          GPIOI
+#define LD1_GPIO_CLK_ENABLE()                  __HAL_RCC_GPIOI_CLK_ENABLE()
+#define LD1_PIN                                GPIO_PIN_12  //Green
 
+#define LD2_GPIO_PORT                          GPIOI
+#define LD2_GPIO_CLK_ENABLE()                  __HAL_RCC_GPIOI_CLK_ENABLE()
+#define LD2_PIN                                GPIO_PIN_13  //yellow
+
+#define LD3_GPIO_PORT                          GPIOI
+#define LD3_GPIO_CLK_ENABLE()                  __HAL_RCC_GPIOI_CLK_ENABLE()
+#define LD3_PIN                                GPIO_PIN_14	//red
+
+#define LD4_GPIO_PORT                          GPIOI
+#define LD4_GPIO_CLK_ENABLE()                  __HAL_RCC_GPIOI_CLK_ENABLE()
+#define LD4_PIN                                GPIO_PIN_15	//red
+
+#define LED_GREEN_GPIO_PORT						LD1_GPIO_PORT
+#define LED_GREEN_CLK_ENABLE					LD1_GPIO_CLK_ENABLE()
+#define LED_GREEN_PIN							LD1_PIN
+
+#define LED_YELLOW_GPIO_PORT					LD2_GPIO_PORT
+#define LED_YELLOW_CLK_ENABLE					LD2_GPIO_CLK_ENABLE()
+#define LED_YELLOW_PIN							LD2_PIN
+
+#define LED_RED_GPIO_PORT						LD3_GPIO_PORT
+#define LED_RED_CLK_ENABLE						LD3_GPIO_CLK_ENABLE()
+#define LED_RED_PIN								LD3_PIN
+
+#define LED_BLUE_GPIO_PORT						LD4_GPIO_PORT
+#define LED_BLUE_CLK_ENABLE						LD4_GPIO_CLK_ENABLE()
+#define LED_BLUE_PIN							LD4_PIN
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -1253,6 +1283,7 @@ void MX_FMC_Init(void)
 static void MX_GPIO_Init(void)
 {
 /* USER CODE BEGIN MX_GPIO_Init_1 */
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
 /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
@@ -1269,6 +1300,45 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOJ_CLK_ENABLE();
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
+  /*Configure GPIO pin Output Level */
+    HAL_GPIO_WritePin(LD1_GPIO_PORT, LD1_PIN, GPIO_PIN_RESET);
+
+    /*Configure GPIO pins */
+    GPIO_InitStruct.Pin = LD1_PIN;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(LD1_GPIO_PORT, &GPIO_InitStruct);
+
+    //---------------------------------------
+    HAL_GPIO_WritePin(LD2_GPIO_PORT, LD2_PIN, GPIO_PIN_RESET);
+
+    /*Configure GPIO pins */
+    GPIO_InitStruct.Pin = LD2_PIN;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(LD2_GPIO_PORT, &GPIO_InitStruct);
+
+    //---------------------------------------
+    HAL_GPIO_WritePin(LD3_GPIO_PORT, LD3_PIN, GPIO_PIN_RESET);
+
+    /*Configure GPIO pins */
+    GPIO_InitStruct.Pin = LD3_PIN;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(LD3_GPIO_PORT, &GPIO_InitStruct);
+
+    //---------------------------------------
+    HAL_GPIO_WritePin(LD3_GPIO_PORT, LD4_PIN, GPIO_PIN_RESET);
+
+    /*Configure GPIO pins */
+    GPIO_InitStruct.Pin = LD4_PIN;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(LD4_GPIO_PORT, &GPIO_InitStruct);
 /* USER CODE END MX_GPIO_Init_2 */
 }
 
@@ -1289,7 +1359,13 @@ void StateMachineTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    //osDelay(1);
+	//Heart beat - I'm still alive
+	HAL_GPIO_TogglePin(LED_GREEN_GPIO_PORT, LED_GREEN_PIN);
+	HAL_GPIO_TogglePin(LED_YELLOW_GPIO_PORT, LED_YELLOW_PIN);
+	HAL_GPIO_TogglePin(LED_RED_GPIO_PORT, LED_RED_PIN);
+	HAL_GPIO_TogglePin(LED_BLUE_GPIO_PORT, LED_BLUE_PIN);
+	osDelay(1000);
   }
   /* USER CODE END 5 */
 }
