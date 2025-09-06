@@ -1361,10 +1361,10 @@ void StateMachineTask(void const * argument)
   {
     //osDelay(1);
 	//Heart beat - I'm still alive
-	HAL_GPIO_TogglePin(LED_GREEN_GPIO_PORT, LED_GREEN_PIN);
-	HAL_GPIO_TogglePin(LED_YELLOW_GPIO_PORT, LED_YELLOW_PIN);
-	HAL_GPIO_TogglePin(LED_RED_GPIO_PORT, LED_RED_PIN);
-	HAL_GPIO_TogglePin(LED_BLUE_GPIO_PORT, LED_BLUE_PIN);
+//	HAL_GPIO_TogglePin(LED_GREEN_GPIO_PORT, LED_GREEN_PIN);
+//	HAL_GPIO_TogglePin(LED_YELLOW_GPIO_PORT, LED_YELLOW_PIN);
+//	HAL_GPIO_TogglePin(LED_RED_GPIO_PORT, LED_RED_PIN);
+//	HAL_GPIO_TogglePin(LED_BLUE_GPIO_PORT, LED_BLUE_PIN);
 	osDelay(1000);
   }
   /* USER CODE END 5 */

@@ -1,0 +1,438 @@
+{
+  "Application": {
+    "Screens": [
+      {
+        "Name": "Screen1",
+        "Components": [
+          {
+            "Type": "Image",
+            "Name": "image1",
+            "Width": 800,
+            "Height": 480,
+            "RelativeFilename": "ezinc_gui2.png"
+          },
+          {
+            "Type": "Slider",
+            "Name": "PumpCurrentSensor_slider",
+            "X": 18,
+            "Y": 318,
+            "Width": 332,
+            "Height": 32,
+            "IsHorizontalSlider": true,
+            "BackgroundUnselected": "__generated\\alternate_theme_images_widgets_slider_horizontal_thick_track_medium.png",
+            "BackgroundSelected": "__generated\\alternate_theme_images_widgets_slider_horizontal_thick_filler_medium.png",
+            "Indicator": "__generated\\alternate_theme_images_widgets_slider_horizontal_thick_rounded_dark.png",
+            "BackgroundX": 16,
+            "BackgroundY": 11,
+            "IndicatorMax": 300,
+            "ValueMax": 100,
+            "Preset": "alternate_theme\\presets\\slider\\horizontal\\thick\\medium_rounded_dark.json"
+          },
+          {
+            "Type": "Slider",
+            "Name": "VoltageSensor_slider",
+            "X": 18,
+            "Y": 386,
+            "Width": 332,
+            "Height": 32,
+            "IsHorizontalSlider": true,
+            "BackgroundUnselected": "__generated\\alternate_theme_images_widgets_slider_horizontal_thick_track_medium.png",
+            "BackgroundSelected": "__generated\\alternate_theme_images_widgets_slider_horizontal_thick_filler_medium.png",
+            "Indicator": "__generated\\alternate_theme_images_widgets_slider_horizontal_thick_rounded_dark.png",
+            "BackgroundX": 16,
+            "BackgroundY": 11,
+            "IndicatorMax": 300,
+            "ValueMax": 100,
+            "Preset": "alternate_theme\\presets\\slider\\horizontal\\thick\\medium_rounded_dark.json"
+          },
+          {
+            "Type": "TiledImage",
+            "Name": "tiledImage1",
+            "X": 18,
+            "Y": 95,
+            "Width": 604,
+            "Height": 178,
+            "FileName": "background_600x200_arrow2.png"
+          },
+          {
+            "Type": "TiledImage",
+            "Name": "tiledImage1_1",
+            "X": 638,
+            "Y": 95,
+            "Width": 142,
+            "Height": 178,
+            "FileName": "background_600x200.png"
+          },
+          {
+            "Type": "ButtonWithLabel",
+            "Name": "buttonDischarging",
+            "X": 426,
+            "Y": 209,
+            "Width": 175,
+            "Height": 50,
+            "Pressed": "__generated\\alternate_theme_images_widgets_button_regular_height_50_small_rounded_pressed.png",
+            "Released": "__generated\\alternate_theme_images_widgets_button_regular_height_50_small_rounded_normal.png",
+            "TextId": "__SingleUse_VQEF",
+            "ReleasedColor": {
+              "Red": 255,
+              "Green": 255,
+              "Blue": 255
+            },
+            "PressedColor": {
+              "Red": 245,
+              "Green": 29,
+              "Blue": 51
+            },
+            "TextRotation": "0",
+            "Preset": "alternate_theme\\presets\\button\\regular\\height_50\\small_rounded_normal.json"
+          },
+          {
+            "Type": "ButtonWithLabel",
+            "Name": "buttonCharging",
+            "X": 426,
+            "Y": 109,
+            "Width": 175,
+            "Height": 50,
+            "Pressed": "__generated\\alternate_theme_images_widgets_button_regular_height_50_small_rounded_pressed.png",
+            "Released": "__generated\\alternate_theme_images_widgets_button_regular_height_50_small_rounded_normal.png",
+            "TextId": "__SingleUse_UORO",
+            "ReleasedColor": {
+              "Red": 255,
+              "Green": 255,
+              "Blue": 255
+            },
+            "PressedColor": {
+              "Red": 245,
+              "Green": 29,
+              "Blue": 51
+            },
+            "TextRotation": "0",
+            "Preset": "alternate_theme\\presets\\button\\regular\\height_50\\small_rounded_normal.json"
+          },
+          {
+            "Type": "ButtonWithLabel",
+            "Name": "buttonPumpStatus",
+            "X": 659,
+            "Y": 216,
+            "Width": 100,
+            "Height": 36,
+            "Pressed": "__generated\\alternate_theme_images_widgets_button_regular_height_36_tiny_round_pressed.png",
+            "Released": "__generated\\alternate_theme_images_widgets_button_regular_height_36_tiny_round_action.png",
+            "TextId": "__SingleUse_6JRP",
+            "ReleasedColor": {
+              "Red": 255,
+              "Green": 255,
+              "Blue": 255
+            },
+            "PressedColor": {
+              "Red": 245,
+              "Green": 29,
+              "Blue": 51
+            },
+            "TextRotation": "0",
+            "Preset": "alternate_theme\\presets\\button\\regular\\height_36\\tiny_round_action.json"
+          },
+          {
+            "Type": "ButtonWithLabel",
+            "Name": "buttonStandby",
+            "X": 225,
+            "Y": 159,
+            "Width": 175,
+            "Height": 50,
+            "Pressed": "__generated\\alternate_theme_images_widgets_button_regular_height_50_small_rounded_pressed.png",
+            "Released": "__generated\\alternate_theme_images_widgets_button_regular_height_50_small_rounded_normal.png",
+            "TextId": "__SingleUse_Y4CN",
+            "ReleasedColor": {
+              "Red": 255,
+              "Green": 255,
+              "Blue": 255
+            },
+            "PressedColor": {
+              "Red": 245,
+              "Green": 29,
+              "Blue": 51
+            },
+            "TextRotation": "0",
+            "Preset": "alternate_theme\\presets\\button\\regular\\height_50\\small_rounded_normal.json"
+          },
+          {
+            "Type": "ButtonWithLabel",
+            "Name": "buttonInit",
+            "X": 35,
+            "Y": 159,
+            "Width": 175,
+            "Height": 50,
+            "Pressed": "__generated\\alternate_theme_images_widgets_button_regular_height_50_small_rounded_pressed.png",
+            "Released": "__generated\\alternate_theme_images_widgets_button_regular_height_50_small_rounded_normal.png",
+            "TextId": "__SingleUse_7ACO",
+            "ReleasedColor": {
+              "Red": 255,
+              "Green": 255,
+              "Blue": 255
+            },
+            "PressedColor": {
+              "Red": 245,
+              "Green": 29,
+              "Blue": 51
+            },
+            "TextRotation": "0",
+            "Preset": "alternate_theme\\presets\\button\\regular\\height_50\\small_rounded_normal.json"
+          },
+          {
+            "Type": "ScalableImage",
+            "Name": "scalableImage1",
+            "X": 669,
+            "Y": 104,
+            "Width": 80,
+            "Height": 80,
+            "Filename": "pump1.png",
+            "ScalingAlgorithm": "Nearest-neighbor"
+          },
+          {
+            "Type": "Button",
+            "Name": "buttonEmergecyStop",
+            "X": 659,
+            "Y": 318,
+            "Width": 100,
+            "Height": 100,
+            "Pressed": "eme_buton4_pressed.png",
+            "Released": "eme_buton4_nonpress.png"
+          },
+          {
+            "Type": "TextArea",
+            "Name": "textArea1",
+            "X": 18,
+            "Y": 64,
+            "Width": 132,
+            "Height": 24,
+            "TextId": "__SingleUse_FZQD",
+            "TextRotation": "0",
+            "Color": {
+              "Red": 255,
+              "Green": 255,
+              "Blue": 255
+            },
+            "AutoSize": true
+          },
+          {
+            "Type": "TextArea",
+            "Name": "textArea_CurrentSensor",
+            "X": 490,
+            "Y": 64,
+            "Width": 33,
+            "Height": 24,
+            "TextId": "__SingleUse_OSBY",
+            "TextRotation": "0",
+            "Color": {
+              "Red": 255,
+              "Green": 255,
+              "Blue": 255
+            },
+            "AutoSize": true
+          },
+          {
+            "Type": "TextArea",
+            "Name": "textArea_CurrentSensor_unit",
+            "X": 485,
+            "Y": 64,
+            "Width": 56,
+            "Height": 24,
+            "TextId": "__SingleUse_9AL7",
+            "TextRotation": "0",
+            "Color": {
+              "Red": 255,
+              "Green": 255,
+              "Blue": 255
+            },
+            "AutoSize": true
+          },
+          {
+            "Type": "TextArea",
+            "Name": "textArea_VoltageSensor",
+            "X": 568,
+            "Y": 64,
+            "Width": 33,
+            "Height": 24,
+            "TextId": "__SingleUse_UG5D",
+            "TextRotation": "0",
+            "Color": {
+              "Red": 255,
+              "Green": 255,
+              "Blue": 255
+            },
+            "AutoSize": true
+          },
+          {
+            "Type": "TextArea",
+            "Name": "textArea_VoltageSensor_unit",
+            "X": 607,
+            "Y": 64,
+            "Width": 14,
+            "Height": 24,
+            "TextId": "__SingleUse_QPXQ",
+            "TextRotation": "0",
+            "Color": {
+              "Red": 255,
+              "Green": 255,
+              "Blue": 255
+            },
+            "AutoSize": true
+          },
+          {
+            "Type": "TextArea",
+            "Name": "textArea1_1",
+            "X": 638,
+            "Y": 64,
+            "Width": 124,
+            "Height": 24,
+            "TextId": "__SingleUse_7V4A",
+            "TextRotation": "0",
+            "Color": {
+              "Red": 255,
+              "Green": 255,
+              "Blue": 255
+            },
+            "AutoSize": true
+          },
+          {
+            "Type": "TextArea",
+            "Name": "pumpCurrentSensorText",
+            "X": 18,
+            "Y": 293,
+            "Width": 233,
+            "Height": 19,
+            "TextId": "__SingleUse_8JCR",
+            "TextRotation": "0",
+            "Color": {
+              "Red": 255,
+              "Green": 255,
+              "Blue": 255
+            },
+            "AutoSize": true
+          },
+          {
+            "Type": "TextArea",
+            "Name": "voltageSensorText",
+            "X": 18,
+            "Y": 359,
+            "Width": 184,
+            "Height": 19,
+            "TextId": "__SingleUse_72GZ",
+            "TextRotation": "0",
+            "Color": {
+              "Red": 255,
+              "Green": 255,
+              "Blue": 255
+            },
+            "AutoSize": true
+          },
+          {
+            "Type": "ToggleButton",
+            "Name": "toggleButton1_SysOnOff",
+            "X": 444,
+            "Y": 338,
+            "Width": 170,
+            "Height": 60,
+            "Pressed": "__generated\\alternate_theme_images_widgets_togglebutton_large_round_text_on_active.png",
+            "Released": "__generated\\alternate_theme_images_widgets_togglebutton_large_round_text_off_normal.png",
+            "Preset": "alternate_theme\\presets\\togglebutton\\large\\round_active_text.json"
+          }
+        ],
+        "Interactions": [
+          {
+            "InteractionName": "buttonInit_clicked",
+            "Trigger": {
+              "Type": "TriggerClicked",
+              "TriggerComponent": "buttonInit"
+            },
+            "Action": {
+              "Type": "ActionSetLabelColors"
+            }
+          },
+          {
+            "InteractionName": "PumpCurrentSensor_ChangeValue",
+            "Trigger": {
+              "Type": "TriggerSliderValueChanged",
+              "TriggerComponent": "PumpCurrentSensor_slider"
+            },
+            "Action": {
+              "Type": "ActionExecuteCode"
+            }
+          },
+          {
+            "InteractionName": "VotageSensor_ValueChange",
+            "Trigger": {
+              "Type": "TriggerSliderValueChanged",
+              "TriggerComponent": "VoltageSensor_slider"
+            },
+            "Action": {
+              "Type": "ActionExecuteCode"
+            }
+          }
+        ]
+      }
+    ],
+    "CustomContainerDefinitions": [],
+    "Name": "EzincApplication_GUI_Demo1",
+    "Resolution": {
+      "Width": 800,
+      "Height": 480
+    },
+    "SelectedColorDepth": 24,
+    "StartupScreenName": "Screen1",
+    "SelectedStartupLanguage": "GB",
+    "TouchGfxPath": "../Middlewares/ST/touchgfx",
+    "UIPath": ".",
+    "AvailableColorDepths": [
+      24
+    ],
+    "AvailableLCDs": {
+      "16": "LCD16bpp",
+      "24": "LCD24bpp"
+    },
+    "AvailableSections": [
+      "ExtFlashSection",
+      "IntFlashSection"
+    ],
+    "AvailableResolutions": [
+      {
+        "Width": 800,
+        "Height": 480
+      }
+    ],
+    "PhysicalButtons": [],
+    "FrameworkFeatures": {
+      "LCD24bpp": {
+        "Id": "LCD24bpp",
+        "IsEnabled": true
+      }
+    },
+    "GenerateAssetsCommand": "make -f simulator/gcc/Makefile assets -j8",
+    "PostGenerateCommand": "touchgfx update_project --project-file=simulator/msvs/Application.vcxproj",
+    "PostGenerateTargetCommand": "touchgfx update_project",
+    "CompileSimulatorCommand": "make -f simulator/gcc/Makefile -j8",
+    "RunSimulatorCommand": "build\\bin\\simulator.exe",
+    "CompileTargetCommandOverride": "make -f ../../gcc/Makefile -j8",
+    "FlashTargetCommandOverride": "make -f ../../gcc/Makefile flash",
+    "FlashTargetIntCommandOverride": "make -f ../../gcc/Makefile intflash",
+    "LandscapeSkinX": 0,
+    "LandscapeSkinY": 0,
+    "PortraitSkinX": 0,
+    "PortraitSkinY": 0,
+    "DisplayOrientation": "Landscape",
+    "Family": "STM32H7",
+    "SubFamily": "STM32H747/757",
+    "Toolchain": "STM32CubeIDE",
+    "Platform": "m7",
+    "ProjectFile": "../../STM32H747I-DISCO.ioc",
+    "OptionalComponentsRoot": "../Middlewares/ST/touchgfx_components",
+    "OptionalComponents": [],
+    "AdditionalFeatures": [
+      "CWRVector",
+      "VectorFonts",
+      "Video"
+    ]
+  },
+  "Version": "4.25.0",
+  "CreatedBy": "4.25.0"
+}
