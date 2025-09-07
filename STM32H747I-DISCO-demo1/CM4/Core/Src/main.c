@@ -59,8 +59,8 @@ __attribute__((at(0x30000080))) ETH_DMADescTypeDef  DMATxDscrTab[ETH_TX_DESC_CNT
 
 #elif defined ( __GNUC__ ) /* GNU Compiler */
 
-ETH_DMADescTypeDef DMARxDscrTab[ETH_RX_DESC_CNT] __attribute__((section(".RxDecripSection"))); /* Ethernet Rx DMA Descriptors */
-ETH_DMADescTypeDef DMATxDscrTab[ETH_TX_DESC_CNT] __attribute__((section(".TxDecripSection")));   /* Ethernet Tx DMA Descriptors */
+ETH_DMADescTypeDef DMARxDscrTab[ETH_RX_DESC_CNT] __attribute__((section(".RxDescripSection"))); /* Ethernet Rx DMA Descriptors */
+ETH_DMADescTypeDef DMATxDscrTab[ETH_TX_DESC_CNT] __attribute__((section(".TxDescripSection")));   /* Ethernet Tx DMA Descriptors */
 #endif
 
 ETH_TxPacketConfig TxConfig;
@@ -256,15 +256,15 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of StateMachineTsk */
-  osThreadDef(StateMachineTsk, StateMachineTask, osPriorityHigh, 0, 512);
+  osThreadDef(StateMachineTsk, StateMachineTask, osPriorityNormal, 0, 512);
   StateMachineTskHandle = osThreadCreate(osThread(StateMachineTsk), NULL);
 
   /* definition and creation of VoltageSensTsk */
-  osThreadDef(VoltageSensTsk, VoltageSensorTask, osPriorityLow, 0, 256);
+  osThreadDef(VoltageSensTsk, VoltageSensorTask, osPriorityNormal, 0, 256);
   VoltageSensTskHandle = osThreadCreate(osThread(VoltageSensTsk), NULL);
 
   /* definition and creation of PCurrentSensTsk */
-  osThreadDef(PCurrentSensTsk, PumpCurrentSensorTask, osPriorityLow, 0, 256);
+  osThreadDef(PCurrentSensTsk, PumpCurrentSensorTask, osPriorityNormal, 0, 256);
   PCurrentSensTskHandle = osThreadCreate(osThread(PCurrentSensTsk), NULL);
 
   /* definition and creation of PumpControlTsk */
@@ -339,6 +339,8 @@ static void MX_ADC1_Init(void)
   /** Common config
   */
   hadc1.Instance = ADC1;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV1;
+  hadc1.Init.Resolution = ADC_RESOLUTION_16B;
   hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
   hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   hadc1.Init.LowPowerAutoWait = DISABLE;
@@ -352,12 +354,6 @@ static void MX_ADC1_Init(void)
   hadc1.Init.LeftBitShift = ADC_LEFTBITSHIFT_NONE;
   hadc1.Init.OversamplingMode = DISABLE;
   hadc1.Init.Oversampling.Ratio = 1;
-  if (HAL_ADC_Init(&hadc1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV1;
-  hadc1.Init.Resolution = ADC_RESOLUTION_16B;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
   {
     Error_Handler();
@@ -412,6 +408,7 @@ static void MX_ADC3_Init(void)
   */
   hadc3.Instance = ADC3;
   hadc3.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV1;
+  hadc3.Init.Resolution = ADC_RESOLUTION_16B;
   hadc3.Init.ScanConvMode = ADC_SCAN_DISABLE;
   hadc3.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   hadc3.Init.LowPowerAutoWait = DISABLE;
@@ -425,11 +422,6 @@ static void MX_ADC3_Init(void)
   hadc3.Init.LeftBitShift = ADC_LEFTBITSHIFT_NONE;
   hadc3.Init.OversamplingMode = DISABLE;
   hadc3.Init.Oversampling.Ratio = 1;
-  if (HAL_ADC_Init(&hadc3) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  hadc3.Init.Resolution = ADC_RESOLUTION_16B;
   if (HAL_ADC_Init(&hadc3) != HAL_OK)
   {
     Error_Handler();
@@ -554,7 +546,7 @@ static void MX_ETH_Init(void)
   heth.Init.MediaInterface = HAL_ETH_RMII_MODE;
   heth.Init.TxDesc = DMATxDscrTab;
   heth.Init.RxDesc = DMARxDscrTab;
-  heth.Init.RxBuffLen = 1524;
+  heth.Init.RxBuffLen = 1536;
 
   /* USER CODE BEGIN MACADDRESS */
 
@@ -722,7 +714,8 @@ static void MX_SAI1_Init(void)
   hsai_BlockA1.Init.ClockStrobing = SAI_CLOCKSTROBING_FALLINGEDGE;
   hsai_BlockA1.Init.Synchro = SAI_ASYNCHRONOUS;
   hsai_BlockA1.Init.OutputDrive = SAI_OUTPUTDRIVE_DISABLE;
-  hsai_BlockA1.Init.NoDivider = SAI_MASTERDIVIDER_ENABLE;
+  hsai_BlockA1.Init.NoDivider = SAI_MCK_OVERSAMPLING_DISABLE;
+  hsai_BlockA1.Init.MckOverSampling = SAI_MCK_OVERSAMPLING_DISABLE;
   hsai_BlockA1.Init.FIFOThreshold = SAI_FIFOTHRESHOLD_EMPTY;
   hsai_BlockA1.Init.AudioFrequency = SAI_AUDIO_FREQUENCY_192K;
   hsai_BlockA1.Init.SynchroExt = SAI_SYNCEXT_DISABLE;
@@ -750,6 +743,7 @@ static void MX_SAI1_Init(void)
   hsai_BlockB1.Init.AudioMode = SAI_MODEMASTER_TX;
   hsai_BlockB1.Init.Synchro = SAI_ASYNCHRONOUS;
   hsai_BlockB1.Init.OutputDrive = SAI_OUTPUTDRIVE_DISABLE;
+  hsai_BlockB1.Init.MckOverSampling = SAI_MCK_OVERSAMPLING_DISABLE;
   hsai_BlockB1.Init.FIFOThreshold = SAI_FIFOTHRESHOLD_EMPTY;
   hsai_BlockB1.Init.AudioFrequency = SAI_AUDIO_FREQUENCY_48K;
   hsai_BlockB1.Init.SynchroExt = SAI_SYNCEXT_DISABLE;
@@ -1282,9 +1276,9 @@ void MX_FMC_Init(void)
   */
 static void MX_GPIO_Init(void)
 {
-/* USER CODE BEGIN MX_GPIO_Init_1 */
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
-/* USER CODE END MX_GPIO_Init_1 */
+  /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOI_CLK_ENABLE();
@@ -1299,7 +1293,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOK_CLK_ENABLE();
   __HAL_RCC_GPIOJ_CLK_ENABLE();
 
-/* USER CODE BEGIN MX_GPIO_Init_2 */
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
   /*Configure GPIO pin Output Level */
     HAL_GPIO_WritePin(LD1_GPIO_PORT, LD1_PIN, GPIO_PIN_RESET);
 
@@ -1339,7 +1333,7 @@ static void MX_GPIO_Init(void)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(LD4_GPIO_PORT, &GPIO_InitStruct);
-/* USER CODE END MX_GPIO_Init_2 */
+  /* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
@@ -1438,8 +1432,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.

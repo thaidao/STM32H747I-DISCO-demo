@@ -6,11 +6,14 @@
   <Texts>
     <TextGroup Id="Group1" />
     <TextGroup Id="Unsorted">
+      <Text Id="__SingleUse_YKAF" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">BAT:</Translation>
+      </Text>
       <Text Id="__SingleUse_QPXQ" Alignment="Left" TypographyId="Default">
         <Translation Language="GB">V</Translation>
       </Text>
       <Text Id="__SingleUse_9AL7" Alignment="Left" TypographyId="Default">
-        <Translation Language="GB">      A</Translation>
+        <Translation Language="GB">A</Translation>
       </Text>
       <Text Id="__SingleUse_UG5D" Alignment="Left" TypographyId="Default">
         <Translation Language="GB">0.0</Translation>
@@ -25,7 +28,7 @@
         <Translation Language="GB">Pump current sensor (0~2A)</Translation>
       </Text>
       <Text Id="__SingleUse_7V4A" Alignment="Left" TypographyId="Default">
-        <Translation Language="GB">Pump status</Translation>
+        <Translation Language="GB">Pump:</Translation>
       </Text>
       <Text Id="__SingleUse_FZQD" Alignment="Left" TypographyId="Default">
         <Translation Language="GB">System state</Translation>
@@ -52,5 +55,6 @@
     <Typography Id="Large" Font="verdana.ttf" Size="40" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" />
     <Typography Id="Small" Font="verdana.ttf" Size="10" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" />
     <Typography Id="Typography_00" Font="verdana.ttf" Size="16" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" />
+    <Typography Id="Typography_01" Font="verdana.ttf" Size="12" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" />
   </Typographies>
 </TextDatabase>

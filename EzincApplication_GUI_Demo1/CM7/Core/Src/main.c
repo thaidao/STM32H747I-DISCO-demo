@@ -61,6 +61,8 @@ LTDC_HandleTypeDef hltdc;
 
 QSPI_HandleTypeDef hqspi;
 
+UART_HandleTypeDef huart1;
+
 SDRAM_HandleTypeDef hsdram1;
 
 /* Definitions for TouchGFXTask */
@@ -75,6 +77,34 @@ osThreadId_t videoTaskHandle;
 const osThreadAttr_t videoTask_attributes = {
   .name = "videoTask",
   .stack_size = 1000 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
+/* Definitions for StateMachineTsk */
+osThreadId_t StateMachineTskHandle;
+const osThreadAttr_t StateMachineTsk_attributes = {
+  .name = "StateMachineTsk",
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityHigh,
+};
+/* Definitions for VoltageSensTsk */
+osThreadId_t VoltageSensTskHandle;
+const osThreadAttr_t VoltageSensTsk_attributes = {
+  .name = "VoltageSensTsk",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
+/* Definitions for PCurrentSensTsk */
+osThreadId_t PCurrentSensTskHandle;
+const osThreadAttr_t PCurrentSensTsk_attributes = {
+  .name = "PCurrentSensTsk",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
+/* Definitions for PumpControlTsk */
+osThreadId_t PumpControlTskHandle;
+const osThreadAttr_t PumpControlTsk_attributes = {
+  .name = "PumpControlTsk",
+  .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
 /* USER CODE BEGIN PV */
@@ -94,8 +124,13 @@ static void MX_DSIHOST_DSI_Init(void);
 static void MX_LTDC_Init(void);
 static void MX_CRC_Init(void);
 static void MX_JPEG_Init(void);
+static void MX_USART1_UART_Init(void);
 void TouchGFX_Task(void *argument);
 extern void videoTaskFunc(void *argument);
+void StateMachineTask(void *argument);
+void VoltageSensorTask(void *argument);
+void PumpCurrentSensorTask(void *argument);
+void PumpControlTask(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -183,6 +218,7 @@ Error_Handler();
   MX_LTDC_Init();
   MX_CRC_Init();
   MX_JPEG_Init();
+  MX_USART1_UART_Init();
   MX_TouchGFX_Init();
   /* Call PreOsInit function */
   MX_TouchGFX_PreOSInit();
@@ -215,6 +251,18 @@ Error_Handler();
 
   /* creation of videoTask */
   videoTaskHandle = osThreadNew(videoTaskFunc, NULL, &videoTask_attributes);
+
+  /* creation of StateMachineTsk */
+  StateMachineTskHandle = osThreadNew(StateMachineTask, NULL, &StateMachineTsk_attributes);
+
+  /* creation of VoltageSensTsk */
+  VoltageSensTskHandle = osThreadNew(VoltageSensorTask, NULL, &VoltageSensTsk_attributes);
+
+  /* creation of PCurrentSensTsk */
+  PCurrentSensTskHandle = osThreadNew(PumpCurrentSensorTask, NULL, &PCurrentSensTsk_attributes);
+
+  /* creation of PumpControlTsk */
+  PumpControlTskHandle = osThreadNew(PumpControlTask, NULL, &PumpControlTsk_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -639,6 +687,54 @@ static void MX_QUADSPI_Init(void)
 }
 
 /**
+  * @brief USART1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART1_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART1_Init 0 */
+
+  /* USER CODE END USART1_Init 0 */
+
+  /* USER CODE BEGIN USART1_Init 1 */
+
+  /* USER CODE END USART1_Init 1 */
+  huart1.Instance = USART1;
+  huart1.Init.BaudRate = 115200;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = UART_PARITY_NONE;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  huart1.Init.ClockPrescaler = UART_PRESCALER_DIV1;
+  huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  if (HAL_UART_Init(&huart1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_SetTxFifoThreshold(&huart1, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_SetRxFifoThreshold(&huart1, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_DisableFifoMode(&huart1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART1_Init 2 */
+
+  /* USER CODE END USART1_Init 2 */
+
+}
+
+/**
   * Enable MDMA controller clock
   */
 static void MX_MDMA_Init(void)
@@ -791,6 +887,78 @@ __weak void TouchGFX_Task(void *argument)
     osDelay(1);
   }
   /* USER CODE END 5 */
+}
+
+/* USER CODE BEGIN Header_StateMachineTask */
+/**
+* @brief Function implementing the StateMachineTsk thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StateMachineTask */
+void StateMachineTask(void *argument)
+{
+  /* USER CODE BEGIN StateMachineTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StateMachineTask */
+}
+
+/* USER CODE BEGIN Header_VoltageSensorTask */
+/**
+* @brief Function implementing the VoltageSensTsk thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_VoltageSensorTask */
+void VoltageSensorTask(void *argument)
+{
+  /* USER CODE BEGIN VoltageSensorTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END VoltageSensorTask */
+}
+
+/* USER CODE BEGIN Header_PumpCurrentSensorTask */
+/**
+* @brief Function implementing the PCurrentSensTsk thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_PumpCurrentSensorTask */
+void PumpCurrentSensorTask(void *argument)
+{
+  /* USER CODE BEGIN PumpCurrentSensorTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END PumpCurrentSensorTask */
+}
+
+/* USER CODE BEGIN Header_PumpControlTask */
+/**
+* @brief Function implementing the PumpControlTsk thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_PumpControlTask */
+void PumpControlTask(void *argument)
+{
+  /* USER CODE BEGIN PumpControlTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END PumpControlTask */
 }
 
  /* MPU Configuration */

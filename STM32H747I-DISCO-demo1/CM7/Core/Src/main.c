@@ -187,15 +187,15 @@ Error_Handler();
 
   /* Create the thread(s) */
   /* definition and creation of StateMachineTsk */
-  osThreadDef(StateMachineTsk, StateMachineTask, osPriorityHigh, 0, 512);
+  osThreadDef(StateMachineTsk, StateMachineTask, osPriorityNormal, 0, 512);
   StateMachineTskHandle = osThreadCreate(osThread(StateMachineTsk), NULL);
 
   /* definition and creation of VoltageSensTsk */
-  osThreadDef(VoltageSensTsk, VoltageSensorTask, osPriorityLow, 0, 256);
+  osThreadDef(VoltageSensTsk, VoltageSensorTask, osPriorityNormal, 0, 256);
   VoltageSensTskHandle = osThreadCreate(osThread(VoltageSensTsk), NULL);
 
   /* definition and creation of PCurrentSensTsk */
-  osThreadDef(PCurrentSensTsk, PumpCurrentSensorTask, osPriorityLow, 0, 256);
+  osThreadDef(PCurrentSensTsk, PumpCurrentSensorTask, osPriorityNormal, 0, 256);
   PCurrentSensTskHandle = osThreadCreate(osThread(PCurrentSensTsk), NULL);
 
   /* definition and creation of PumpControlTsk */
@@ -367,14 +367,13 @@ void MX_USART1_UART_Init(void)
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
-/* USER CODE BEGIN MX_GPIO_Init_1 */
-/* USER CODE END MX_GPIO_Init_1 */
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
+  /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
-  __HAL_RCC_GPIOI_CLK_ENABLE();
 
   /*Configure GPIO pin : CEC_CK_MCO1_Pin */
   GPIO_InitStruct.Pin = CEC_CK_MCO1_Pin;
@@ -384,7 +383,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Alternate = GPIO_AF0_MCO;
   HAL_GPIO_Init(CEC_CK_MCO1_GPIO_Port, &GPIO_InitStruct);
 
-/* USER CODE BEGIN MX_GPIO_Init_2 */
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
   /*Configure GPIO pin Output Level */
       HAL_GPIO_WritePin(LD1_GPIO_PORT, LD1_PIN, GPIO_PIN_RESET);
 
@@ -424,7 +423,7 @@ static void MX_GPIO_Init(void)
       GPIO_InitStruct.Pull = GPIO_NOPULL;
       GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
       HAL_GPIO_Init(LD4_GPIO_PORT, &GPIO_InitStruct);
-/* USER CODE END MX_GPIO_Init_2 */
+  /* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
@@ -523,8 +522,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.

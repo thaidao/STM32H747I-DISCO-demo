@@ -181,17 +181,17 @@
           {
             "Type": "ScalableImage",
             "Name": "scalableImage1",
-            "X": 669,
-            "Y": 104,
-            "Width": 80,
-            "Height": 80,
+            "X": 670,
+            "Y": 109,
+            "Width": 78,
+            "Height": 78,
             "Filename": "pump1.png",
             "ScalingAlgorithm": "Nearest-neighbor"
           },
           {
             "Type": "Button",
             "Name": "buttonEmergecyStop",
-            "X": 659,
+            "X": 664,
             "Y": 318,
             "Width": 100,
             "Height": 100,
@@ -216,26 +216,10 @@
           },
           {
             "Type": "TextArea",
-            "Name": "textArea_CurrentSensor",
-            "X": 490,
-            "Y": 64,
-            "Width": 33,
-            "Height": 24,
-            "TextId": "__SingleUse_OSBY",
-            "TextRotation": "0",
-            "Color": {
-              "Red": 255,
-              "Green": 255,
-              "Blue": 255
-            },
-            "AutoSize": true
-          },
-          {
-            "Type": "TextArea",
             "Name": "textArea_CurrentSensor_unit",
-            "X": 485,
+            "X": 756,
             "Y": 64,
-            "Width": 56,
+            "Width": 14,
             "Height": 24,
             "TextId": "__SingleUse_9AL7",
             "TextRotation": "0",
@@ -248,12 +232,12 @@
           },
           {
             "Type": "TextArea",
-            "Name": "textArea_VoltageSensor",
-            "X": 568,
+            "Name": "textArea_CurrentSensor",
+            "X": 720,
             "Y": 64,
             "Width": 33,
             "Height": 24,
-            "TextId": "__SingleUse_UG5D",
+            "TextId": "__SingleUse_OSBY",
             "TextRotation": "0",
             "Color": {
               "Red": 255,
@@ -280,10 +264,42 @@
           },
           {
             "Type": "TextArea",
-            "Name": "textArea1_1",
-            "X": 638,
+            "Name": "textArea_VoltageSensor_unit_1",
+            "X": 513,
             "Y": 64,
-            "Width": 124,
+            "Width": 46,
+            "Height": 24,
+            "TextId": "__SingleUse_YKAF",
+            "TextRotation": "0",
+            "Color": {
+              "Red": 255,
+              "Green": 255,
+              "Blue": 255
+            },
+            "AutoSize": true
+          },
+          {
+            "Type": "TextArea",
+            "Name": "textArea_VoltageSensor",
+            "X": 568,
+            "Y": 64,
+            "Width": 33,
+            "Height": 24,
+            "TextId": "__SingleUse_UG5D",
+            "TextRotation": "0",
+            "Color": {
+              "Red": 255,
+              "Green": 255,
+              "Blue": 255
+            },
+            "AutoSize": true
+          },
+          {
+            "Type": "TextArea",
+            "Name": "textArea1_1",
+            "X": 649,
+            "Y": 64,
+            "Width": 65,
             "Height": 24,
             "TextId": "__SingleUse_7V4A",
             "TextRotation": "0",
@@ -329,7 +345,7 @@
           {
             "Type": "ToggleButton",
             "Name": "toggleButton1_SysOnOff",
-            "X": 444,
+            "X": 428,
             "Y": 338,
             "Width": 170,
             "Height": 60,
