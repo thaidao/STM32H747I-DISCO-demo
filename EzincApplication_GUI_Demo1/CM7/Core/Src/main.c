@@ -24,6 +24,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>  // For string manipulation
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -1133,9 +1134,22 @@ void checkCurrent(float current) {
 
 // UART log function
 void uartLog(const char *task, const char *level, const char *function, const char *message) {
-    uint32_t time_ms = osKernelGetTickCount(); // Get current time in ms
-    printf("[%lu] [%s] [%s] [%s] %s\r\n", time_ms, task, level, function, message);
+	char printStr[128];
+	uint32_t time_ms = osKernelGetTickCount(); // Get current time in ms
+	snprintf(printStr, sizeof(printStr),"[%lu] [%s] [%s] [%s] %s\r\n", time_ms, task, level, function, message);
+	USART1_Print(printStr);
 }
+
+void USART1_Print(const char *str) {
+    HAL_UART_Transmit(&huart1, (uint8_t *)str, strlen(str), HAL_MAX_DELAY);
+}
+
+void USART1_Println(const char *str) {
+    HAL_UART_Transmit(&huart1, (uint8_t *)str, strlen(str), HAL_MAX_DELAY);
+    uint8_t newline[] = "\r\n";
+    HAL_UART_Transmit(&huart1, newline, sizeof(newline) - 1, HAL_MAX_DELAY);
+}
+
 
 /* USER CODE END 4 */
 
