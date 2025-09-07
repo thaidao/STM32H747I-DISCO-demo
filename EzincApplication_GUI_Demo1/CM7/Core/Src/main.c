@@ -22,6 +22,9 @@
 #include "cmsis_os.h"
 #include "app_touchgfx.h"
 
+#include <stdio.h>
+#include <stdbool.h>
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -29,6 +32,26 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+// System state enumeration
+// Represents the different states of the Battery Management System (BMS)
+typedef enum {
+	INIT = 0,		// System is in initition
+    STANDBY,     	// System is idle, no charging or discharging
+    CHARGING,    	// System is charging the battery
+    DISCHARGING, 	// System is discharging the battery
+    ERROR_STATE  	// Error state, typically caused by sensor errors
+} SystemState_t;
+
+// Global state variable, initial state is STANDBY
+static SystemState_t g_currentState = INIT;
+
+// Error flags for voltage and current sensors
+static bool g_voltageErrorFlag = false;
+static bool g_currentErrorFlag = false;
+
+static float g_voltageVal = 0;	//Store value of battery voltage
+static float g_currentVal = 0;	//Store value of pump current
+
 
 /* USER CODE END PTD */
 
@@ -73,6 +96,16 @@
 #define LED_BLUE_GPIO_PORT						LD4_GPIO_PORT
 #define LED_BLUE_CLK_ENABLE						LD4_GPIO_CLK_ENABLE()
 #define LED_BLUE_PIN							LD4_PIN
+
+
+// Sensor range definitions (units: volts for voltage and amperes for current)
+#define VOLTAGE_MIN_CHARGING 			2.1  // Minimum voltage for charging [V]
+#define VOLTAGE_MAX_CHARGING 			2.5  // Maximum voltage for charging [V]
+#define VOLTAGE_MIN_DISCHARGING 		0.9  // Minimum voltage for discharging [V]
+#define VOLTAGE_MAX_DISCHARGING 		1.3  // Maximum voltage for discharging [V]
+#define CURRENT_MIN 					1.0  // Minimum current for pump operation [A]
+#define CURRENT_MAX 					1.3  // Maximum current for pump operation [A]
+
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -163,7 +196,16 @@ void PumpCurrentSensorTask(void *argument);
 void PumpControlTask(void *argument);
 
 /* USER CODE BEGIN PFP */
+// Utility functions
+void checkVoltage(float voltage);
+void updateVoltage(float voltage);
+float getVoltage();
 
+void checkCurrent(float current);
+void changeState(SystemState_t newState);
+float getVoltage();
+
+void uartLog(const char *task, const char *level, const char *function, const char *message);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -936,6 +978,164 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void updateVoltage(float voltage)
+{
+	g_voltageVal = voltage;
+}
+
+float getVoltage()
+{
+	return g_voltageVal;
+}
+
+float readVoltageSensor()
+{
+	// Simulate voltage reading (replace with actual sensor reading)
+	//Get current value of slider
+	return 2.3;
+}
+
+float readCurrentSensor()
+{
+	// Simulate current reading (replace with actual sensor reading)
+	//Get current value of slider
+	return 1.2;
+}
+void updateCurrent(float current)
+{
+	g_currentVal = current;
+}
+
+float getCurrent()
+{
+	return g_currentVal;
+}
+
+// Simulate pump control (replace with actual control logic)
+// Pump runs only when the state is Charging or Discharging
+void pumpStart()
+{
+	//Turn on LED blue
+	HAL_GPIO_WritePin(LED_BLUE_GPIO_PORT,LED_BLUE_PIN,GPIO_PIN_SET);
+	//Change text of button from "Idle" to "Running"
+}
+
+void pumpStop()
+{
+	//Turn off LED blue
+	HAL_GPIO_WritePin(LED_BLUE_GPIO_PORT,LED_BLUE_PIN,GPIO_PIN_RESET);
+
+	//Change text of button from "Running" to "Idle"
+}
+
+bool isChargingRange()
+{
+	float fVoltage = getVoltage();
+
+	if(fVoltage > VOLTAGE_MIN_CHARGING && fVoltage < VOLTAGE_MAX_CHARGING)
+		return true;
+
+	return false;
+}
+
+bool isDishargingRange()
+{
+	float fVoltage = getVoltage();
+
+	if(fVoltage > VOLTAGE_MIN_DISCHARGING && fVoltage < VOLTAGE_MAX_DISCHARGING)
+		return true;
+
+	return false;
+}
+
+
+SystemState_t getSystemSate()
+{
+	return g_currentState;
+}
+
+void setSystemState(SystemState_t state)
+{
+	g_currentState = state;
+}
+
+// Utility function to change system state
+void changeSystemState(SystemState_t state)
+{
+	// set new state
+	setSystemState(state);
+
+    // Log state transition
+    char stateStr[20];
+    switch (state) {
+    	case INIT: 		   snprintf(stateStr, sizeof(stateStr), "INIT"); break;
+        case STANDBY:      snprintf(stateStr, sizeof(stateStr), "STANDBY"); break;
+        case CHARGING:     snprintf(stateStr, sizeof(stateStr), "CHARGING"); break;
+        case DISCHARGING:  snprintf(stateStr, sizeof(stateStr), "DISCHARGING"); break;
+        case ERROR_STATE:  snprintf(stateStr, sizeof(stateStr), "ERROR_STATE"); break;
+        default: break;
+    }
+    uartLog("StateMachineTask", "INFO", __FUNCTION__, stateStr);
+
+}
+
+void initializeSystem() {}						//Initialize system
+bool isInitializeSystemDone() { return true;}	//Check if system is initialized successfully
+bool isSystemError(){
+	if ( !g_voltageErrorFlag && !g_currentErrorFlag)
+		return false;
+
+	return true;
+}
+
+bool isHigherEntityChangeStateReq(){
+	return false;
+}
+
+// Utility function to check voltage
+void checkVoltage(float voltage) {
+
+	// Set default error flag;
+	g_voltageErrorFlag = false;
+
+	//Get global system state
+	SystemState_t sysState = getSystemSate();
+
+	// Check voltage is charing range or not
+	if (sysState == CHARGING && ( g_voltageVal < VOLTAGE_MIN_CHARGING || g_voltageVal > VOLTAGE_MAX_CHARGING)){
+		//Set error voltage flag
+		g_voltageErrorFlag = true;
+        uartLog("VoltageSensorTask", "ERROR", __FUNCTION__, "Voltage out of range for charging.");
+		return;
+	}
+
+	// Check voltage is discharing range or not
+	if (sysState == DISCHARGING && ( g_voltageVal < VOLTAGE_MIN_DISCHARGING || g_voltageVal > VOLTAGE_MAX_DISCHARGING)){
+		//Set error voltage flag
+		g_voltageErrorFlag = true;
+        uartLog("VoltageSensorTask", "ERROR", __FUNCTION__, "Voltage out of range for discharging.");
+	}
+}
+
+// Utility function to check current
+void checkCurrent(float current) {
+	// Set default error flag;
+	g_currentErrorFlag = false;
+
+	//Get global system state
+	//SystemState_t sysState = getSystemSate();
+
+    if (g_currentVal < CURRENT_MIN || g_currentVal > CURRENT_MAX) {
+        g_currentErrorFlag = true;
+        uartLog("PumpCurrentSensorTask", "ERROR", __FUNCTION__, "Current out of range.");
+    }
+}
+
+// UART log function
+void uartLog(const char *task, const char *level, const char *function, const char *message) {
+    uint32_t time_ms = osKernelGetTickCount(); // Get current time in ms
+    printf("[%lu] [%s] [%s] [%s] %s\r\n", time_ms, task, level, function, message);
+}
 
 /* USER CODE END 4 */
 
@@ -981,6 +1181,52 @@ void StateMachineTask(void *argument)
   /* USER CODE END StateMachineTask */
 }
 
+//Statemachine task
+void StateMachineTask1(void *argument) {
+
+	//float fCurrent = getCurrent();
+	//float fVoltage = getVoltage();
+	SystemState_t sysState = getSystemSate();
+
+	//Initialize system
+	initializeSystem();
+
+	// Super loop
+    for (;;) {
+		switch (sysState) {
+			case INIT:
+				if ( isInitializeSystemDone() == true){
+					changeSystemState(STANDBY);
+				}
+				break;
+
+			case STANDBY:
+				if ( !isSystemError()){
+					if(isChargingRange() == true){
+						changeSystemState(CHARGING);
+
+					}else if (isDishargingRange() == true){
+						changeSystemState(DISCHARGING);
+					}
+				}
+				break;
+
+			case CHARGING:
+			case DISCHARGING:
+			case ERROR_STATE:
+				if(isSystemError() == true || isHigherEntityChangeStateReq()){
+					changeSystemState(STANDBY);
+				}
+				break;
+			default:
+				break;
+		}
+
+        osDelay(100);  // Simulate periodic state machine check
+    }
+}
+
+
 /* USER CODE BEGIN Header_VoltageSensorTask */
 /**
 * @brief Function implementing the VoltageSensTsk thread.
@@ -994,7 +1240,20 @@ void VoltageSensorTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+	// Voltage reading from sensor
+	float fVoltage = readVoltageSensor();
+
+	// Update global voltage value
+	updateVoltage(fVoltage);
+
+	// Check voltage and raise error if any
+	checkVoltage(fVoltage);
+
+	// Log voltage sensor task status
+	uartLog("VoltageSensorTask", "INFO", __FUNCTION__, "Voltage check completed.");
+
+	// Simulate periodic delay of 1 second
+	osDelay(1000);
   }
   /* USER CODE END VoltageSensorTask */
 }
@@ -1012,7 +1271,20 @@ void PumpCurrentSensorTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+	// Current reading from sensor
+	float fCurrent = readCurrentSensor();
+
+	// Update global current value
+	updateCurrent(fCurrent);
+
+	// Check voltage and raise error if any
+	checkCurrent(fCurrent);
+
+	// Log current sensor task status
+	uartLog("PumpCurrentSensorTask", "INFO", __FUNCTION__, "Current check completed.");
+
+	// Simulate periodic delay of 1 second
+	osDelay(1000);
   }
   /* USER CODE END PumpCurrentSensorTask */
 }
@@ -1030,7 +1302,22 @@ void PumpControlTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+      if (g_currentState == CHARGING || g_currentState == DISCHARGING) {
+		// Log pump control task when pump is operating
+		uartLog("PumpControlTask", "INFO", __FUNCTION__, "Pump is operating.");
+
+		//Start pump
+		pumpStart();
+
+      } else {
+		// Log pump stop status
+		uartLog("PumpControlTask", "INFO", __FUNCTION__, "Pump is stopped.");
+
+		// Stop pump
+		pumpStop();
+      }
+
+      osDelay(500);  // Simulate periodic check
   }
   /* USER CODE END PumpControlTask */
 }
