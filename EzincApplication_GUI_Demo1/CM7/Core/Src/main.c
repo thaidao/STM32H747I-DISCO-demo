@@ -1004,7 +1004,7 @@ float getVoltage()
 }
 
 //Test strategy 1: fix current, increase voltage from 0~3V
-//#define TEST_STRATEGY_1		1
+#define TEST_STRATEGY_1		1
 
 // Simulate voltage reading (replace with actual sensor reading)
 float readVoltageSensor()
@@ -1185,12 +1185,6 @@ void checkCurrent(float current) {
 void handleSystemError()
 {
 	char strTemp[64];
-	//char strPrtDebug[64];
-
-//	sprintf(strTemp,"\n\r[DEBUG][ERROR] System is error");
-//	USART1_Print(strTemp);
-//	return;
-
 
 	if(g_voltageErrorFlag && g_currentErrorFlag) {
 		//sprintf(strTemp,"\n\r[DEBUG][ERROR] %s", "System is error");
@@ -1292,6 +1286,8 @@ void StateMachineTask(void *argument) {
 
 	//Initialize system
 	initializeSystem();
+	sprintf(strTemp,"\n\r[DEBUG][INFO] System state = INIT");
+	USART1_Print(strTemp);
 
 	// Super loop
     for (;;) {
