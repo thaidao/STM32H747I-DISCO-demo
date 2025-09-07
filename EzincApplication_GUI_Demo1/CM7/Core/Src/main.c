@@ -121,6 +121,9 @@ static float g_currentVal = 0;	//Store value of pump current
 #define CURRENT_MIN 					1.0  // Minimum current for pump operation [A]
 #define CURRENT_MAX 					1.3  // Maximum current for pump operation [A]
 
+// For testing
+#define TEST_STRATEGY_1		1		//Enable test strategy 1
+
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -691,12 +694,12 @@ static void MX_LTDC_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN LTDC_Init 2 */
-  
+
       /* Configure DSI PHY HS2LP and LP2HS timings */
-    
+
   __HAL_LTDC_DISABLE(&hltdc);
   DSI_LPCmdTypeDef LPCmd;
-  
+
   HAL_DSI_Start(&hdsi);
 
   /* Configure the audio driver */
@@ -993,186 +996,293 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+/**
+ * @brief Update the global voltage value.
+ *
+ * This function updates the global voltage value to the specified value.
+ *
+ * @param voltage The new voltage value to be set.
+ */
 void updateVoltage(float voltage)
 {
-	g_voltageVal = voltage;
+    g_voltageVal = voltage;
 }
 
+/**
+ * @brief Get the current global voltage value.
+ *
+ * This function retrieves the current global voltage value.
+ *
+ * @return The current voltage value.
+ */
 float getVoltage()
 {
-	return g_voltageVal;
+    return g_voltageVal;
 }
 
-//Test strategy 1: fix current, increase voltage from 0~3V
-#define TEST_STRATEGY_1		1
-
-// Simulate voltage reading (replace with actual sensor reading)
+/**
+ * @brief Simulate voltage reading from a sensor.
+ *
+ * This function simulates reading the voltage value from a sensor. It uses a dummy
+ * voltage value for testing and can be replaced with actual sensor readings.
+ *
+ * @return The simulated voltage value.
+ */
 float readVoltageSensor()
 {
-	static float fDummyVoltage = 0;
-	//@todo for testing: Get current value of slider on UI 0~3V
-#ifdef TEST_STRATEGY_1 //test strategy 1
-	fDummyVoltage = (fDummyVoltage < 2.7) ? fDummyVoltage + 0.15 : 0.6; //increase 0.15V each cycle,0.9~1.3 and 2.1~2.5
-#else
-	fDummyVoltage = 2.2; //In charing
-	//fDummyVoltage = 1.1; //In discharing
-#endif
-	return fDummyVoltage;
+    static float fDummyVoltage = 0;
+
+    //@todo for testing: Get current value of slider on UI 0~3V
+    #ifdef TEST_STRATEGY_1
+        fDummyVoltage = (fDummyVoltage < 2.7) ? fDummyVoltage + 0.15 : 0.6; // Increase 0.15V each cycle
+    #else
+        fDummyVoltage = 2.2; // In charging
+    #endif
+    return fDummyVoltage;
 }
 
-// Simulate current reading (replace with actual sensor reading)
+/**
+ * @brief Simulate current reading from a sensor.
+ *
+ * This function simulates reading the current value from a sensor. It uses a dummy
+ * current value for testing and can be replaced with actual sensor readings.
+ *
+ * @return The simulated current value.
+ */
 float readCurrentSensor()
 {
-	static float fDummyCurrent = 0;
+    static float fDummyCurrent = 0;
 
-	// @todo for testing: Get current value of slider on UI (0~2A)
-#ifdef TEST_STRATEGY_1 //test strategy 1
-	fDummyCurrent = 1.2;
-#else
-	fDummyCurrent = (fDummyCurrent < 1.4) ? fDummyCurrent + 0.05 : 0.8; //increase 0.05A each cycle. Test range: 1~1.3
-#endif
-
-	return fDummyCurrent;
+    //@todo for testing: Get current value of slider on UI (0~2A)
+    #ifdef TEST_STRATEGY_1
+        fDummyCurrent = 1.2;
+    #else
+        fDummyCurrent = (fDummyCurrent < 1.4) ? fDummyCurrent + 0.05 : 0.8; // Increase 0.05A each cycle
+    #endif
+    return fDummyCurrent;
 }
 
+/**
+ * @brief Update the global current value.
+ *
+ * This function updates the global current value to the specified value.
+ *
+ * @param current The new current value to be set.
+ */
 void updateCurrent(float current)
 {
-	g_currentVal = current;
+    g_currentVal = current;
 }
 
+/**
+ * @brief Get the current global current value.
+ *
+ * This function retrieves the current global current value.
+ *
+ * @return The current current value.
+ */
 float getCurrent()
 {
-	return g_currentVal;
+    return g_currentVal;
 }
 
-// Simulate pump control (replace with actual control logic)
-// Pump runs only when the state is Charging or Discharging
+/**
+ * @brief Start the pump and activate the corresponding control actions.
+ *
+ * This function simulates starting the pump by turning on the blue LED and
+ * changing the button text to "Running".
+ */
 void pumpStart()
 {
-	//Turn on LED blue
-	HAL_GPIO_WritePin(LED_BLUE_GPIO_PORT,LED_BLUE_PIN,GPIO_PIN_SET);
-	//Change text of button from "Idle" to "Running"
+    // Turn on LED blue
+    HAL_GPIO_WritePin(LED_BLUE_GPIO_PORT, LED_BLUE_PIN, GPIO_PIN_SET);
+    // Change text of button from "Idle" to "Running"
 }
 
+/**
+ * @brief Stop the pump and deactivate the corresponding control actions.
+ *
+ * This function simulates stopping the pump by turning off the blue LED and
+ * changing the button text to "Idle".
+ */
 void pumpStop()
 {
-	//Turn off LED blue
-	HAL_GPIO_WritePin(LED_BLUE_GPIO_PORT,LED_BLUE_PIN,GPIO_PIN_RESET);
-
-	//Change text of button from "Running" to "Idle"
+    // Turn off LED blue
+    HAL_GPIO_WritePin(LED_BLUE_GPIO_PORT, LED_BLUE_PIN, GPIO_PIN_RESET);
+    // Change text of button from "Running" to "Idle"
 }
 
+/**
+ * @brief Check if the system is in the charging voltage range.
+ *
+ * This function checks if the current voltage value is within the charging range.
+ *
+ * @return true if the voltage is within the charging range, false otherwise.
+ */
 bool isChargingRange()
 {
-	float fVoltage = getVoltage();
+    float fVoltage = getVoltage();
 
-	if(fVoltage > VOLTAGE_MIN_CHARGING && fVoltage < VOLTAGE_MAX_CHARGING){
-    	//USART1_Print("isChargingRange");
-		return true;
-	}
+    if (fVoltage > VOLTAGE_MIN_CHARGING && fVoltage < VOLTAGE_MAX_CHARGING) {
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
+/**
+ * @brief Check if the system is in the discharging voltage range.
+ *
+ * This function checks if the current voltage value is within the discharging range.
+ *
+ * @return true if the voltage is within the discharging range, false otherwise.
+ */
 bool isDishargingRange()
 {
-	float fVoltage = getVoltage();
+    float fVoltage = getVoltage();
 
-	if(fVoltage > VOLTAGE_MIN_DISCHARGING && fVoltage < VOLTAGE_MAX_DISCHARGING){
-    	//USART1_Print("isDishargingRange");
-		return true;
-	}
+    if (fVoltage > VOLTAGE_MIN_DISCHARGING && fVoltage < VOLTAGE_MAX_DISCHARGING) {
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
-
+/**
+ * @brief Get the current system state.
+ *
+ * This function retrieves the current system state.
+ *
+ * @return The current system state.
+ */
 SystemState_t getSystemSate()
 {
-	return g_currentState;
+    return g_currentState;
 }
 
+/**
+ * @brief Set the system state to the specified state.
+ *
+ * This function sets the current system state to the specified state.
+ *
+ * @param state The new system state to be set.
+ */
 void setSystemState(SystemState_t state)
 {
-	g_currentState = state;
+    g_currentState = state;
 }
 
-
-
-// Utility function to change system state
+/**
+ * @brief Change the system state.
+ *
+ * This utility function changes the system state if it is different from the current state.
+ * It also logs the transition for debugging purposes.
+ *
+ * @param state The new system state to be set.
+ */
 void changeSystemState(SystemState_t state)
 {
-	char strTemp[128] = "";
+    char strTemp[128] = "";
     char stateStr[16];
 
-    if(state == g_currentState) return;
+    if (state == g_currentState) return;
 
-    //Debug
-//	sprintf(strTemp,"Before = %s, After = %s", sysStatetbl[g_currentState].sStateName, sysStatetbl[state].sStateName);
-//	uartDebugLog("StateMachineTask", "ERROR", __FUNCTION__, strTemp);
+    // Debug log
+    sprintf(strTemp, "\n\r[DEBUG][INFO][changeSystemState] Before = %s, After = %s", sysStatetbl[g_currentState].sStateName, sysStatetbl[state].sStateName);
+    USART1_Print(strTemp);
 
-	sprintf(strTemp,"\n\r[DEBUG][INFO][changeSystemState] Before = %s, After = %s", sysStatetbl[g_currentState].sStateName, sysStatetbl[state].sStateName);
-	USART1_Print(strTemp);
-
-	// set new state
-	setSystemState(state);
+    // Set new state
+    setSystemState(state);
 }
 
-//Initialize system
-void initializeSystem() {
-	//Dummy data for test
-	updateVoltage(2.1);
-	updateCurrent(1.1);
+/**
+ * @brief Initialize the system with dummy values for testing.
+ *
+ * This function initializes the system by setting dummy values for voltage and current.
+ */
+void initializeSystem()
+{
+    // Dummy data for test
+    updateVoltage(2.1);
+    updateCurrent(1.1);
 }
 
-//Check if system is initialized successfully
-bool isInitializeSystemDone() { return true;}
-
-//Check system error or not
-bool isSystemError(){
-	if ( g_voltageErrorFlag == false && g_currentErrorFlag == false)
-		return false;
-
-	return true;
+/**
+ * @brief Check if the system has been initialized.
+ *
+ * This function checks if the system has been initialized successfully.
+ *
+ * @return true if the system is initialized, false otherwise.
+ */
+bool isInitializeSystemDone()
+{
+    return true;
 }
 
-//Check request change state from higher entity
-bool isHigherEntityChangeStateReq(){
-	return false;
+/**
+ * @brief Check if there is any system error.
+ *
+ * This function checks if there are any voltage or current errors in the system.
+ *
+ * @return true if there is an error, false otherwise.
+ */
+bool isSystemError()
+{
+    if (g_voltageErrorFlag == false && g_currentErrorFlag == false)
+        return false;
+
+    return true;
 }
 
-// Utility function to check voltage
-void checkVoltage(float voltage) {
+/**
+ * @brief Check if there is a request to change the system state from a higher entity.
+ *
+ * This function checks if there is a request to change the system state from a higher entity.
+ *
+ * @return true if there is a request, false otherwise.
+ */
+bool isHigherEntityChangeStateReq()
+{
+    return false;
+}
 
-	// Set default error flag;
-	g_voltageErrorFlag = false;
+/**
+ * @brief Check if the voltage is within the acceptable range.
+ *
+ * This function checks if the voltage is within the range based on the current system state
+ * (charging or discharging). If it is not, an error flag is set.
+ *
+ * @param voltage The voltage value to be checked.
+ */
+void checkVoltage(float voltage)
+{
+    g_voltageErrorFlag = false;
 
-	//Get global system state
-	SystemState_t sysState = getSystemSate();
+    SystemState_t sysState = getSystemSate();
 
-	// Check voltage is charing range or not
-	if (sysState == CHARGING && ( g_voltageVal < VOLTAGE_MIN_CHARGING || g_voltageVal > VOLTAGE_MAX_CHARGING)){
-		//Set error voltage flag
-		g_voltageErrorFlag = true;
+    if (sysState == CHARGING && (g_voltageVal < VOLTAGE_MIN_CHARGING || g_voltageVal > VOLTAGE_MAX_CHARGING)) {
+        g_voltageErrorFlag = true;
         uartLog("VoltageSensorTask", "ERROR", __FUNCTION__, "Voltage out of range for charging.");
-		return;
-	}
+        return;
+    }
 
-	// Check voltage is discharing range or not
-	if (sysState == DISCHARGING && ( g_voltageVal < VOLTAGE_MIN_DISCHARGING || g_voltageVal > VOLTAGE_MAX_DISCHARGING)){
-		//Set error voltage flag
-		g_voltageErrorFlag = true;
+    if (sysState == DISCHARGING && (g_voltageVal < VOLTAGE_MIN_DISCHARGING || g_voltageVal > VOLTAGE_MAX_DISCHARGING)) {
+        g_voltageErrorFlag = true;
         uartLog("VoltageSensorTask", "ERROR", __FUNCTION__, "Voltage out of range for discharging.");
-	}
+    }
 }
 
-// Utility function to check current
-void checkCurrent(float current) {
-	// Set default error flag;
-	g_currentErrorFlag = false;
-
-	//Get global system state
-	//SystemState_t sysState = getSystemSate();
+/**
+ * @brief Check if the current is within the acceptable range.
+ *
+ * This function checks if the current is within the specified range. If it is not,
+ * an error flag is set.
+ *
+ * @param current The current value to be checked.
+ */
+void checkCurrent(float current)
+{
+    g_currentErrorFlag = false;
 
     if (g_currentVal < CURRENT_MIN || g_currentVal > CURRENT_MAX) {
         g_currentErrorFlag = true;
@@ -1180,52 +1290,84 @@ void checkCurrent(float current) {
     }
 }
 
-
-// System error handling
+/**
+ * @brief Handle any system errors that occur.
+ *
+ * This function handles system errors by checking voltage and current error flags
+ * and printing appropriate error messages.
+ */
 void handleSystemError()
 {
-	char strTemp[64];
-
-	if(g_voltageErrorFlag && g_currentErrorFlag) {
-		//sprintf(strTemp,"\n\r[DEBUG][ERROR] %s", "System is error");
-
-		USART1_Print("\n\r[DEBUG][ERROR] System is error");
-	} else if (g_voltageErrorFlag){
-		//sprintf(strTemp,"\n\r[DEBUG][ERROR] %s", "Voltage is out of range");
-
-		USART1_Print("\n\r[DEBUG][ERROR] Voltage is out of range");
-	} else if (g_voltageErrorFlag){
-		//sprintf(strTemp,"\n\r[DEBUG][ERROR] %s", "Pump current is out of range");
-		USART1_Print("\n\r[DEBUG][ERROR] Pump current is out of range");
-	}
-
-	//uartDebugLog("StateMachineTask", "ERROR", __FUNCTION__, strTemp);
-	//sprintf(strPrtDebug,"\n\r[DEBUG][ERROR] %s", strTemp);
-	//USART1_Print(strTemp);
+    if (g_voltageErrorFlag && g_currentErrorFlag) {
+        USART1_Print("\n\r[DEBUG][ERROR] System is error");
+    } else if (g_voltageErrorFlag) {
+        USART1_Print("\n\r[DEBUG][ERROR] Voltage is out of range");
+    } else if (g_currentErrorFlag) {
+        USART1_Print("\n\r[DEBUG][ERROR] Pump current is out of range");
+    }
 }
 
-// UART log function
-void uartLog(const char *task, const char *level, const char *function, const char *message) {
-	return;
-	char printStr[128];
-	uint32_t time_ms = osKernelGetTickCount(); // Get current time in ms
-	snprintf(printStr, sizeof(printStr),"[%lu] [%s] [%s] [%s] %s\r\n", time_ms, task, level, function, message);
-	USART1_Print(printStr);
+/**
+ * @brief Log a message to the UART.
+ *
+ * This function logs a message to the UART with a timestamp, task, level, function,
+ * and message content.
+ *
+ * @param task The task name.
+ * @param level The log level.
+ * @param function The function name where the log is generated.
+ * @param message The log message.
+ */
+void uartLog(const char *task, const char *level, const char *function, const char *message)
+{
+    return;
+    char printStr[128];
+    uint32_t time_ms = osKernelGetTickCount(); // Get current time in ms
+    snprintf(printStr, sizeof(printStr), "[%lu] [%s] [%s] [%s] %s\r\n", time_ms, task, level, function, message);
+    USART1_Print(printStr);
 }
 
-void uartDebugLog(const char *task, const char *level, const char *function, const char *message) {
-	return;
-	char printStr[128];
-	uint32_t time_ms = osKernelGetTickCount(); // Get current time in ms
-	snprintf(printStr, sizeof(printStr),"[%lu] [%s] [%s] [%s] %s\r\n", time_ms, task, level, function, message);
-	USART1_Print(printStr);
+/**
+ * @brief Log a debug message to the UART.
+ *
+ * This function logs a debug message to the UART with a timestamp, task, level,
+ * function, and message content.
+ *
+ * @param task The task name.
+ * @param level The log level.
+ * @param function The function name where the log is generated.
+ * @param message The debug message.
+ */
+void uartDebugLog(const char *task, const char *level, const char *function, const char *message)
+{
+    return;
+    char printStr[128];
+    uint32_t time_ms = osKernelGetTickCount(); // Get current time in ms
+    snprintf(printStr, sizeof(printStr), "[%lu] [%s] [%s] [%s] %s\r\n", time_ms, task, level, function, message);
+    USART1_Print(printStr);
 }
 
-void USART1_Print(const char *str) {
+/**
+ * @brief Transmit a string to the UART.
+ *
+ * This function transmits a string to the UART.
+ *
+ * @param str The string to be transmitted.
+ */
+void USART1_Print(const char *str)
+{
     HAL_UART_Transmit(&huart1, (uint8_t *)str, strlen(str), HAL_MAX_DELAY);
 }
 
-void USART1_Println(const char *str) {
+/**
+ * @brief Transmit a string followed by a newline to the UART.
+ *
+ * This function transmits a string followed by a newline to the UART.
+ *
+ * @param str The string to be transmitted.
+ */
+void USART1_Println(const char *str)
+{
     HAL_UART_Transmit(&huart1, (uint8_t *)str, strlen(str), HAL_MAX_DELAY);
     uint8_t newline[] = "\r\n";
     HAL_UART_Transmit(&huart1, newline, sizeof(newline) - 1, HAL_MAX_DELAY);
