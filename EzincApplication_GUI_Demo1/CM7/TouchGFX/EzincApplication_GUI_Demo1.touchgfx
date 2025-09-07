@@ -384,6 +384,17 @@
             "Action": {
               "Type": "ActionExecuteCode"
             }
+          },
+          {
+            "InteractionName": "Bt_SysOnOff_Clicked",
+            "Trigger": {
+              "Type": "TriggerClicked",
+              "TriggerComponent": "toggleButton1_SysOnOff"
+            },
+            "Action": {
+              "Type": "ActionCustom",
+              "FunctionName": "Bt_SysOnOff_Clicked"
+            }
           }
         ]
       }

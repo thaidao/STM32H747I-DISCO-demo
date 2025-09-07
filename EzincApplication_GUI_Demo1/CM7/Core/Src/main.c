@@ -43,6 +43,20 @@ typedef enum {
     ERROR_STATE  	// Error state, typically caused by sensor errors
 } SystemState_t;
 
+
+typedef struct{
+	SystemState_t	eState;
+	char			sStateName[16];
+}st_SystemStateTbl_t;
+
+const st_SystemStateTbl_t sysStatetbl[5] = {
+    {INIT,        "INIT"},        // System is in initiation
+    {STANDBY,     "STANDBY"},     // System is idle, no charging or discharging
+    {CHARGING,    "CHARGING"},    // System is charging the battery
+    {DISCHARGING, "DISCHARGING"}, // System is discharging the battery
+    {ERROR_STATE, "ERROR_STATE"}  // Error state, typically caused by sensor errors
+};
+
 // Global state variable, initial state is STANDBY
 static SystemState_t g_currentState = INIT;
 
@@ -147,7 +161,7 @@ const osThreadAttr_t videoTask_attributes = {
 osThreadId_t StateMachineTskHandle;
 const osThreadAttr_t StateMachineTsk_attributes = {
   .name = "StateMachineTsk",
-  .stack_size = 512 * 4,
+  .stack_size = 2048 * 4,
   .priority = (osPriority_t) osPriorityHigh,
 };
 /* Definitions for VoltageSensTsk */
@@ -991,9 +1005,13 @@ float getVoltage()
 
 float readVoltageSensor()
 {
+	static float fDummyVoltage = 0;
+
 	// Simulate voltage reading (replace with actual sensor reading)
 	//Get current value of slider
-	return 2.3;
+	fDummyVoltage = (fDummyVoltage < 3) ? fDummyVoltage + 0.15 : 0; //increase 0.15V each cycle
+
+	return fDummyVoltage;
 }
 
 float readCurrentSensor()
@@ -1033,8 +1051,10 @@ bool isChargingRange()
 {
 	float fVoltage = getVoltage();
 
-	if(fVoltage > VOLTAGE_MIN_CHARGING && fVoltage < VOLTAGE_MAX_CHARGING)
+	if(fVoltage > VOLTAGE_MIN_CHARGING && fVoltage < VOLTAGE_MAX_CHARGING){
+    	//USART1_Print("isChargingRange");
 		return true;
+	}
 
 	return false;
 }
@@ -1043,8 +1063,10 @@ bool isDishargingRange()
 {
 	float fVoltage = getVoltage();
 
-	if(fVoltage > VOLTAGE_MIN_DISCHARGING && fVoltage < VOLTAGE_MAX_DISCHARGING)
+	if(fVoltage > VOLTAGE_MIN_DISCHARGING && fVoltage < VOLTAGE_MAX_DISCHARGING){
+    	//USART1_Print("isDishargingRange");
 		return true;
+	}
 
 	return false;
 }
@@ -1060,35 +1082,46 @@ void setSystemState(SystemState_t state)
 	g_currentState = state;
 }
 
+
+
 // Utility function to change system state
 void changeSystemState(SystemState_t state)
 {
+	char strTemp[128] = "";
+    char stateStr[16];
+
+    if(state == g_currentState) return;
+
+    //Debug
+//	sprintf(strTemp,"Before = %s, After = %s", sysStatetbl[g_currentState].sStateName, sysStatetbl[state].sStateName);
+//	uartDebugLog("StateMachineTask", "ERROR", __FUNCTION__, strTemp);
+
+	sprintf(strTemp,"\n\r[DEBUG][INFO][changeSystemState] Before = %s, After = %s", sysStatetbl[g_currentState].sStateName, sysStatetbl[state].sStateName);
+	USART1_Print(strTemp);
+
 	// set new state
 	setSystemState(state);
-
-    // Log state transition
-    char stateStr[20];
-    switch (state) {
-    	case INIT: 		   snprintf(stateStr, sizeof(stateStr), "INIT"); break;
-        case STANDBY:      snprintf(stateStr, sizeof(stateStr), "STANDBY"); break;
-        case CHARGING:     snprintf(stateStr, sizeof(stateStr), "CHARGING"); break;
-        case DISCHARGING:  snprintf(stateStr, sizeof(stateStr), "DISCHARGING"); break;
-        case ERROR_STATE:  snprintf(stateStr, sizeof(stateStr), "ERROR_STATE"); break;
-        default: break;
-    }
-    uartLog("StateMachineTask", "INFO", __FUNCTION__, stateStr);
-
 }
 
-void initializeSystem() {}						//Initialize system
-bool isInitializeSystemDone() { return true;}	//Check if system is initialized successfully
+//Initialize system
+void initializeSystem() {
+	//Dummy data for test
+	updateVoltage(2.1);
+	updateCurrent(1.1);
+}
+
+//Check if system is initialized successfully
+bool isInitializeSystemDone() { return true;}
+
+//Check system error or not
 bool isSystemError(){
-	if ( !g_voltageErrorFlag && !g_currentErrorFlag)
+	if ( g_voltageErrorFlag == false && g_currentErrorFlag == false)
 		return false;
 
 	return true;
 }
 
+//Check request change state from higher entity
 bool isHigherEntityChangeStateReq(){
 	return false;
 }
@@ -1132,8 +1165,47 @@ void checkCurrent(float current) {
     }
 }
 
+
+// System error handling
+void handleSystemError()
+{
+	char strTemp[64];
+	//char strPrtDebug[64];
+
+	sprintf(strTemp,"\n\r[DEBUG][ERROR] System is error");
+	USART1_Print(strTemp);
+	return;
+
+
+	if(g_voltageErrorFlag && g_currentErrorFlag) {
+		//sprintf(strTemp,"\n\r[DEBUG][ERROR] %s", "System is error");
+
+		USART1_Print("\n\r[DEBUG][ERROR] System is error");
+	} else if (g_voltageErrorFlag){
+		//sprintf(strTemp,"\n\r[DEBUG][ERROR] %s", "Voltage is out of range");
+
+		USART1_Print("\n\r[DEBUG][ERROR] Voltage is out of range");
+	} else if (g_voltageErrorFlag){
+		//sprintf(strTemp,"\n\r[DEBUG][ERROR] %s", "Pump current is out of range");
+		USART1_Print("\n\r[DEBUG][ERROR] Pump current is out of range");
+	}
+
+	//uartDebugLog("StateMachineTask", "ERROR", __FUNCTION__, strTemp);
+	//sprintf(strPrtDebug,"\n\r[DEBUG][ERROR] %s", strTemp);
+	//USART1_Print(strTemp);
+}
+
 // UART log function
 void uartLog(const char *task, const char *level, const char *function, const char *message) {
+	return;
+	char printStr[128];
+	uint32_t time_ms = osKernelGetTickCount(); // Get current time in ms
+	snprintf(printStr, sizeof(printStr),"[%lu] [%s] [%s] [%s] %s\r\n", time_ms, task, level, function, message);
+	USART1_Print(printStr);
+}
+
+void uartDebugLog(const char *task, const char *level, const char *function, const char *message) {
+	return;
 	char printStr[128];
 	uint32_t time_ms = osKernelGetTickCount(); // Get current time in ms
 	snprintf(printStr, sizeof(printStr),"[%lu] [%s] [%s] [%s] %s\r\n", time_ms, task, level, function, message);
@@ -1195,18 +1267,32 @@ void StateMachineTask1(void *argument)
   /* USER CODE END StateMachineTask */
 }
 
-//Statemachine task
+//State machine task
 void StateMachineTask(void *argument) {
 
-	//float fCurrent = getCurrent();
-	//float fVoltage = getVoltage();
-	SystemState_t sysState = getSystemSate();
+	char strTemp[64];
+	float fCurrent = 0;// getCurrent();
+	float fVoltage = 0;//getVoltage();
+	SystemState_t sysState; //= getSystemSate();
 
 	//Initialize system
 	initializeSystem();
 
 	// Super loop
     for (;;) {
+
+#if 1	//for debug purpose only
+    	fCurrent = getCurrent();
+    	fVoltage = getVoltage();
+    	sysState = getSystemSate();
+
+    	//sprintf(strTemp,"Current:%0.1f, Voltage:%0.1f",fCurrent,fVoltage);
+    	//uartDebugLog("StateMachineTask", "ERROR", __FUNCTION__, strTemp);
+
+    	sprintf(strTemp,"\n\r[DEBUG][INFO] Current:%0.2fA, Voltage:%0.2fV",fCurrent,fVoltage);
+    	USART1_Print(strTemp);
+#endif
+
 		switch (sysState) {
 			case INIT:
 				if ( isInitializeSystemDone() == true){
@@ -1215,30 +1301,50 @@ void StateMachineTask(void *argument) {
 				break;
 
 			case STANDBY:
+				//Check system is error or not
 				if ( !isSystemError()){
+
 					if(isChargingRange() == true){
 						changeSystemState(CHARGING);
 
 					}else if (isDishargingRange() == true){
 						changeSystemState(DISCHARGING);
 					}
+				}else {
+					changeSystemState(ERROR_STATE);
 				}
+
 				break;
 
 			case CHARGING:
 			case DISCHARGING:
-			case ERROR_STATE:
-				if(isSystemError() == true || isHigherEntityChangeStateReq()){
-					changeSystemState(STANDBY);
+				if(isSystemError() == true){
+					changeSystemState(ERROR_STATE);
+					break;
 				}
+
+				if(isHigherEntityChangeStateReq()){
+					//Get new state from higher entity
+					//changeSystemState(ERROR_STATE);
+				}
+
 				break;
+
+			case ERROR_STATE:
+				// Error handling
+				handleSystemError();
+
+				//Change to standby
+				changeSystemState(STANDBY);
+				break;
+
 			default:
 				break;
 		}
 
 		//Heart beat - I'm still alive
 		HAL_GPIO_TogglePin(LED_GREEN_GPIO_PORT, LED_GREEN_PIN);
-        osDelay(100);  // Simulate periodic state machine check
+        osDelay(1000);  // Simulate periodic state machine check
     }
 }
 
