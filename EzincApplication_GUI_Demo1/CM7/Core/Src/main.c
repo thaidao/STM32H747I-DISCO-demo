@@ -1014,8 +1014,8 @@ float readVoltageSensor()
 #ifdef TEST_STRATEGY_1 //test strategy 1
 	fDummyVoltage = (fDummyVoltage < 2.7) ? fDummyVoltage + 0.15 : 0.6; //increase 0.15V each cycle,0.9~1.3 and 2.1~2.5
 #else
-	//fDummyVoltage = 2.2; //In charing
-	fDummyVoltage = 1.1; //In discharing
+	fDummyVoltage = 2.2; //In charing
+	//fDummyVoltage = 1.1; //In discharing
 #endif
 	return fDummyVoltage;
 }
