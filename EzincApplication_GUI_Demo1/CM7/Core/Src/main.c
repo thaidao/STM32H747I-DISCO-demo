@@ -1003,23 +1003,38 @@ float getVoltage()
 	return g_voltageVal;
 }
 
+//Test strategy 1: fix current, increase voltage from 0~3V
+//#define TEST_STRATEGY_1		1
+
+// Simulate voltage reading (replace with actual sensor reading)
 float readVoltageSensor()
 {
 	static float fDummyVoltage = 0;
-
-	// Simulate voltage reading (replace with actual sensor reading)
-	//Get current value of slider
-	fDummyVoltage = (fDummyVoltage < 3) ? fDummyVoltage + 0.15 : 0; //increase 0.15V each cycle
-
+	//@todo for testing: Get current value of slider on UI 0~3V
+#ifdef TEST_STRATEGY_1 //test strategy 1
+	fDummyVoltage = (fDummyVoltage < 2.7) ? fDummyVoltage + 0.15 : 0.6; //increase 0.15V each cycle,0.9~1.3 and 2.1~2.5
+#else
+	//fDummyVoltage = 2.2; //In charing
+	fDummyVoltage = 1.1; //In discharing
+#endif
 	return fDummyVoltage;
 }
 
+// Simulate current reading (replace with actual sensor reading)
 float readCurrentSensor()
 {
-	// Simulate current reading (replace with actual sensor reading)
-	//Get current value of slider
-	return 1.2;
+	static float fDummyCurrent = 0;
+
+	// @todo for testing: Get current value of slider on UI (0~2A)
+#ifdef TEST_STRATEGY_1 //test strategy 1
+	fDummyCurrent = 1.2;
+#else
+	fDummyCurrent = (fDummyCurrent < 1.4) ? fDummyCurrent + 0.05 : 0.8; //increase 0.05A each cycle. Test range: 1~1.3
+#endif
+
+	return fDummyCurrent;
 }
+
 void updateCurrent(float current)
 {
 	g_currentVal = current;
@@ -1172,9 +1187,9 @@ void handleSystemError()
 	char strTemp[64];
 	//char strPrtDebug[64];
 
-	sprintf(strTemp,"\n\r[DEBUG][ERROR] System is error");
-	USART1_Print(strTemp);
-	return;
+//	sprintf(strTemp,"\n\r[DEBUG][ERROR] System is error");
+//	USART1_Print(strTemp);
+//	return;
 
 
 	if(g_voltageErrorFlag && g_currentErrorFlag) {
