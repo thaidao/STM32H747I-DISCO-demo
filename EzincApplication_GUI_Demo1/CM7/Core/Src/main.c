@@ -1164,7 +1164,7 @@ __weak void TouchGFX_Task(void *argument)
 * @retval None
 */
 /* USER CODE END Header_StateMachineTask */
-void StateMachineTask(void *argument)
+void StateMachineTask1(void *argument)
 {
   /* USER CODE BEGIN StateMachineTask */
   /* Infinite loop */
@@ -1182,7 +1182,7 @@ void StateMachineTask(void *argument)
 }
 
 //Statemachine task
-void StateMachineTask1(void *argument) {
+void StateMachineTask(void *argument) {
 
 	//float fCurrent = getCurrent();
 	//float fVoltage = getVoltage();
@@ -1222,6 +1222,8 @@ void StateMachineTask1(void *argument) {
 				break;
 		}
 
+		//Heart beat - I'm still alive
+		HAL_GPIO_TogglePin(LED_GREEN_GPIO_PORT, LED_GREEN_PIN);
         osDelay(100);  // Simulate periodic state machine check
     }
 }
