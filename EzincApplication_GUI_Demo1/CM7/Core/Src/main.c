@@ -1298,8 +1298,6 @@ bool isHigherEntityChangeStateReq()
  */
 void checkVoltage(float voltage)
 {
-    g_voltageErrorFlag = false;
-
     SystemState_t sysState = getSystemSate();
 
     if (sysState == CHARGING && (g_voltageVal < VOLTAGE_MIN_CHARGING || g_voltageVal > VOLTAGE_MAX_CHARGING)) {
@@ -1311,7 +1309,10 @@ void checkVoltage(float voltage)
     if (sysState == DISCHARGING && (g_voltageVal < VOLTAGE_MIN_DISCHARGING || g_voltageVal > VOLTAGE_MAX_DISCHARGING)) {
         g_voltageErrorFlag = true;
         uartLog("VoltageSensorTask", "ERROR", __FUNCTION__, "Voltage out of range for discharging.");
+        return;
     }
+
+    g_voltageErrorFlag = false;
 }
 
 /**
@@ -1324,11 +1325,11 @@ void checkVoltage(float voltage)
  */
 void checkCurrent(float current)
 {
-    g_currentErrorFlag = false;
-
     if (g_currentVal < CURRENT_MIN || g_currentVal > CURRENT_MAX) {
         g_currentErrorFlag = true;
         uartLog("PumpCurrentSensorTask", "ERROR", __FUNCTION__, "Current out of range.");
+    }else{
+        g_currentErrorFlag = false;
     }
 }
 
