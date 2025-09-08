@@ -1037,7 +1037,7 @@ float readVoltageSensor()
     #ifdef TEST_STRATEGY_1
         fDummyVoltage = (fDummyVoltage < 2.7) ? fDummyVoltage + 0.15 : 0.6; // Increase 0.15V each cycle
     #else
-        fDummyVoltage = 2.2; // In charging
+        fDummyVoltage = 1.1; // In charging 2.2, in discharging 1.1V
     #endif
     return fDummyVoltage;
 }
@@ -1052,7 +1052,7 @@ float readVoltageSensor()
  */
 float readCurrentSensor()
 {
-    static float fDummyCurrent = 0;
+    static float fDummyCurrent = 0.8;
 
     //@todo for testing: Get current value of slider on UI (0~2A)
     #ifdef TEST_STRATEGY_1
