@@ -59,6 +59,7 @@ const st_SystemStateTbl_t sysStatetbl[5] = {
 
 // Global state variable, initial state is STANDBY
 static SystemState_t g_currentState = INIT;
+static bool	g_pumpIsRunning = false;
 
 // Error flags for voltage and current sensors
 static bool g_voltageErrorFlag = false;
@@ -94,7 +95,7 @@ static float g_currentVal = 0;	//Store value of pump current
 
 #define LD4_GPIO_PORT                          GPIOI
 #define LD4_GPIO_CLK_ENABLE()                  __HAL_RCC_GPIOI_CLK_ENABLE()
-#define LD4_PIN                                GPIO_PIN_15	//red
+#define LD4_PIN                                GPIO_PIN_15	//blue
 
 #define LED_GREEN_GPIO_PORT						LD1_GPIO_PORT
 #define LED_GREEN_CLK_ENABLE					LD1_GPIO_CLK_ENABLE()
@@ -1094,6 +1095,7 @@ float getCurrent()
  */
 void pumpStart()
 {
+	g_pumpIsRunning = true;
     // Turn on LED blue
     HAL_GPIO_WritePin(LED_BLUE_GPIO_PORT, LED_BLUE_PIN, GPIO_PIN_SET);
     // Change text of button from "Idle" to "Running"
@@ -1107,10 +1109,30 @@ void pumpStart()
  */
 void pumpStop()
 {
+	g_pumpIsRunning = false;
     // Turn off LED blue
     HAL_GPIO_WritePin(LED_BLUE_GPIO_PORT, LED_BLUE_PIN, GPIO_PIN_RESET);
     // Change text of button from "Running" to "Idle"
 }
+
+/**
+ * @brief Check if the pump is running or not.
+ *
+ * This function checks if the pump is running or not.
+ *
+ * @return true if the pump is running, false otherwise.
+ */
+bool isPumpRunning()
+{
+	return g_pumpIsRunning;
+}
+
+/**
+ * @brief Stop the pump and deactivate the corresponding control actions.
+ *
+ * This function simulates stopping the pump by turning off the blue LED and
+ * changing the button text to "Idle".
+ */
 
 /**
  * @brief Check if the system is in the charging voltage range.
@@ -1183,7 +1205,6 @@ void setSystemState(SystemState_t state)
 void changeSystemState(SystemState_t state)
 {
     char strTemp[128] = "";
-    char stateStr[16];
 
     if (state == g_currentState) return;
 
@@ -1193,6 +1214,17 @@ void changeSystemState(SystemState_t state)
 
     // Set new state
     setSystemState(state);
+
+    // LED state indicators
+    if(state == DISCHARGING)
+    	HAL_GPIO_WritePin(LED_YELLOW_GPIO_PORT, LED_YELLOW_PIN, GPIO_PIN_SET);
+    else if (state == CHARGING)
+    	HAL_GPIO_WritePin(LED_RED_GPIO_PORT, LED_RED_PIN, GPIO_PIN_SET);
+    else{
+    	HAL_GPIO_WritePin(LED_YELLOW_GPIO_PORT, LED_YELLOW_PIN, GPIO_PIN_RESET);
+    	HAL_GPIO_WritePin(LED_RED_GPIO_PORT, LED_RED_PIN, GPIO_PIN_RESET);
+    	HAL_GPIO_WritePin(LED_BLUE_GPIO_PORT, LED_BLUE_PIN, GPIO_PIN_RESET);
+    }
 }
 
 /**
@@ -1205,6 +1237,16 @@ void initializeSystem()
     // Dummy data for test
     updateVoltage(2.1);
     updateCurrent(1.1);
+
+    // Initialize system status
+    g_pumpIsRunning = false;
+    g_currentState = INIT;
+
+
+	HAL_GPIO_WritePin(LED_GREEN_GPIO_PORT, LED_GREEN_PIN, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LED_YELLOW_GPIO_PORT, LED_YELLOW_PIN, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LED_RED_GPIO_PORT, LED_RED_PIN, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LED_BLUE_GPIO_PORT, LED_BLUE_PIN, GPIO_PIN_RESET);
 }
 
 /**
@@ -1394,6 +1436,7 @@ __weak void TouchGFX_Task(void *argument)
   /* USER CODE END 5 */
 }
 
+#if 0
 /* USER CODE BEGIN Header_StateMachineTask */
 /**
 * @brief Function implementing the StateMachineTsk thread.
@@ -1417,19 +1460,25 @@ void StateMachineTask1(void *argument)
   }
   /* USER CODE END StateMachineTask */
 }
+#else
 
 //State machine task
 void StateMachineTask(void *argument) {
 
-	char strTemp[64];
+	char strTemp[80];
 	float fCurrent = 0;// getCurrent();
 	float fVoltage = 0;//getVoltage();
 	SystemState_t sysState; //= getSystemSate();
 
 	//Initialize system
-	initializeSystem();
-	sprintf(strTemp,"\n\r[DEBUG][INFO] System state = INIT");
+	sprintf(strTemp,"\n\r\n\r===========================================================================");
 	USART1_Print(strTemp);
+	initializeSystem();
+	sprintf(strTemp,"\n\r\n\r[DEBUG][INFO] System state = INIT");
+	USART1_Print(strTemp);
+
+
+    osDelay(3000);  // Simulate periodic state machine check
 
 	// Super loop
     for (;;) {
@@ -1445,6 +1494,10 @@ void StateMachineTask(void *argument) {
     	sprintf(strTemp,"\n\r[DEBUG][INFO] Current:%0.2fA, Voltage:%0.2fV",fCurrent,fVoltage);
     	USART1_Print(strTemp);
 #endif
+    	// If received request change state from higher entity
+		if(isHigherEntityChangeStateReq()){
+			//changeSystemState(ERROR_STATE);
+		}
 
 		switch (sysState) {
 			case INIT:
@@ -1473,12 +1526,6 @@ void StateMachineTask(void *argument) {
 			case DISCHARGING:
 				if(isSystemError() == true){
 					changeSystemState(ERROR_STATE);
-					break;
-				}
-
-				if(isHigherEntityChangeStateReq()){
-					//Get new state from higher entity
-					//changeSystemState(ERROR_STATE);
 				}
 
 				break;
@@ -1501,6 +1548,7 @@ void StateMachineTask(void *argument) {
     }
 }
 
+#endif
 
 /* USER CODE BEGIN Header_VoltageSensorTask */
 /**
@@ -1573,27 +1621,41 @@ void PumpCurrentSensorTask(void *argument)
 /* USER CODE END Header_PumpControlTask */
 void PumpControlTask(void *argument)
 {
-  /* USER CODE BEGIN PumpControlTask */
-  /* Infinite loop */
-  for(;;)
-  {
-      if (g_currentState == CHARGING || g_currentState == DISCHARGING) {
+	/* USER CODE BEGIN PumpControlTask */
+	char strTemp[64] = "";
+
+
+	/* Infinite loop */
+	for(;;)
+	{
+	  if (g_currentState == CHARGING || g_currentState == DISCHARGING) {
 		// Log pump control task when pump is operating
 		uartLog("PumpControlTask", "INFO", __FUNCTION__, "Pump is operating.");
 
-		//Start pump
-		pumpStart();
+		//Start pump if it is not running
+		if(isPumpRunning()==false){
+			pumpStart();
 
-      } else {
+			//For debug
+			sprintf(strTemp, "\n\r[DEBUG][INFO] Pump has started");
+			USART1_Print(strTemp);
+		}
+	  } else {
 		// Log pump stop status
 		uartLog("PumpControlTask", "INFO", __FUNCTION__, "Pump is stopped.");
 
 		// Stop pump
-		pumpStop();
-      }
+		if(isPumpRunning()==true){
+			pumpStop();
 
-      osDelay(500);  // Simulate periodic check
-  }
+			//For debug
+			sprintf(strTemp, "\n\r[DEBUG][INFO] Pump has stopped");
+			USART1_Print(strTemp);
+		}
+	  }
+
+	  osDelay(500);  // Simulate periodic check
+	}
   /* USER CODE END PumpControlTask */
 }
 
