@@ -12,6 +12,44 @@
             "RelativeFilename": "ezinc_gui2.png"
           },
           {
+            "Type": "TiledImage",
+            "Name": "tiledImageSysStateBg",
+            "X": 18,
+            "Y": 95,
+            "Width": 604,
+            "Height": 178,
+            "FileName": "background_600x200_arrow2.png"
+          },
+          {
+            "Type": "Image",
+            "Name": "SysStateBgError",
+            "X": 17,
+            "Y": 95,
+            "Width": 604,
+            "Height": 178,
+            "RelativeFilename": "StateBg_604x178_error.png",
+            "Alpha": 0
+          },
+          {
+            "Type": "TiledImage",
+            "Name": "tiledImagePumpBg",
+            "X": 638,
+            "Y": 95,
+            "Width": 142,
+            "Height": 178,
+            "FileName": "background_600x200.png"
+          },
+          {
+            "Type": "Image",
+            "Name": "imagePumpError",
+            "X": 638,
+            "Y": 95,
+            "Width": 142,
+            "Height": 178,
+            "RelativeFilename": "background_142x178_error.png",
+            "Alpha": 0
+          },
+          {
             "Type": "Slider",
             "Name": "PumpCurrentSensor_slider",
             "X": 18,
@@ -46,24 +84,6 @@
             "Preset": "alternate_theme\\presets\\slider\\horizontal\\thick\\medium_rounded_dark.json"
           },
           {
-            "Type": "TiledImage",
-            "Name": "tiledImage1",
-            "X": 18,
-            "Y": 95,
-            "Width": 604,
-            "Height": 178,
-            "FileName": "background_600x200_arrow2.png"
-          },
-          {
-            "Type": "TiledImage",
-            "Name": "tiledImage1_1",
-            "X": 638,
-            "Y": 95,
-            "Width": 142,
-            "Height": 178,
-            "FileName": "background_600x200.png"
-          },
-          {
             "Type": "ButtonWithLabel",
             "Name": "buttonDischarging",
             "X": 426,
@@ -72,6 +92,7 @@
             "Height": 50,
             "Pressed": "__generated\\alternate_theme_images_widgets_button_regular_height_50_small_rounded_pressed.png",
             "Released": "__generated\\alternate_theme_images_widgets_button_regular_height_50_small_rounded_normal.png",
+            "Alpha": 150,
             "TextId": "__SingleUse_VQEF",
             "ReleasedColor": {
               "Red": 255,
@@ -95,6 +116,7 @@
             "Height": 50,
             "Pressed": "__generated\\alternate_theme_images_widgets_button_regular_height_50_small_rounded_pressed.png",
             "Released": "__generated\\alternate_theme_images_widgets_button_regular_height_50_small_rounded_normal.png",
+            "Alpha": 150,
             "TextId": "__SingleUse_UORO",
             "ReleasedColor": {
               "Red": 255,
@@ -141,6 +163,7 @@
             "Height": 50,
             "Pressed": "__generated\\alternate_theme_images_widgets_button_regular_height_50_small_rounded_pressed.png",
             "Released": "__generated\\alternate_theme_images_widgets_button_regular_height_50_small_rounded_normal.png",
+            "Alpha": 150,
             "TextId": "__SingleUse_Y4CN",
             "ReleasedColor": {
               "Red": 255,
@@ -164,6 +187,7 @@
             "Height": 50,
             "Pressed": "__generated\\alternate_theme_images_widgets_button_regular_height_50_small_rounded_pressed.png",
             "Released": "__generated\\alternate_theme_images_widgets_button_regular_height_50_small_rounded_normal.png",
+            "Alpha": 150,
             "TextId": "__SingleUse_7ACO",
             "ReleasedColor": {
               "Red": 255,
@@ -191,7 +215,7 @@
           {
             "Type": "Button",
             "Name": "buttonEmergecyStop",
-            "X": 664,
+            "X": 659,
             "Y": 318,
             "Width": 100,
             "Height": 100,
@@ -352,6 +376,39 @@
             "Pressed": "__generated\\alternate_theme_images_widgets_togglebutton_large_round_text_on_active.png",
             "Released": "__generated\\alternate_theme_images_widgets_togglebutton_large_round_text_off_normal.png",
             "Preset": "alternate_theme\\presets\\togglebutton\\large\\round_active_text.json"
+          },
+          {
+            "Type": "TextArea",
+            "Name": "text_PumpIdle",
+            "X": 691,
+            "Y": 222,
+            "Width": 37,
+            "Height": 24,
+            "TextId": "__SingleUse_5N9O",
+            "TextRotation": "0",
+            "Color": {
+              "Red": 255,
+              "Green": 247,
+              "Blue": 247
+            },
+            "AutoSize": true
+          },
+          {
+            "Type": "TextArea",
+            "Name": "text_PumpRunning",
+            "X": 668,
+            "Y": 222,
+            "Width": 83,
+            "Height": 24,
+            "TextId": "__SingleUse_IO7Y",
+            "TextRotation": "0",
+            "Color": {
+              "Red": 240,
+              "Green": 60,
+              "Blue": 60
+            },
+            "Alpha": 0,
+            "AutoSize": true
           }
         ],
         "Interactions": [
@@ -372,7 +429,8 @@
               "TriggerComponent": "PumpCurrentSensor_slider"
             },
             "Action": {
-              "Type": "ActionExecuteCode"
+              "Type": "ActionSetText",
+              "TextId": "__SingleUse_CNRD"
             }
           },
           {
@@ -392,8 +450,8 @@
               "TriggerComponent": "toggleButton1_SysOnOff"
             },
             "Action": {
-              "Type": "ActionCustom",
-              "FunctionName": "Bt_SysOnOff_Clicked"
+              "Type": "ActionExecuteCode",
+              "Code": "    if (&src == &toggleButton1_SysOnOff)\r\n    {\r\n\t\tif(toggleButton1_SysOnOff.getState()){\r\n\t\t\t//Bt_SysOnOff_Clicked\r\n\t\t\t//When toggleButton1_SysOnOff clicked fade buttonInit\r\n\t\t\t//Set alpha to 255 on buttonInit\r\n\t\t\tbuttonInit.setAlpha(255);\r\n\t\t}else\r\n\t\t{\r\n\t\t\tbuttonInit.setAlpha(150);\r\n\t\t\tbuttonStandby.setAlpha(150);\r\n\t\t\tbuttonCharging.setAlpha(150);\r\n\t\t\tbuttonDischarging.setAlpha(150);\r\n\r\n\t\t\tPumpCurrentSensor_slider.setValue(0);\r\n\t\t\tVoltageSensor_slider.setValue(0);\r\n\t\t}\r\n        buttonInit.invalidate();\r\n    }"
             }
           }
         ]

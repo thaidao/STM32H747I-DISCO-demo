@@ -4,8 +4,27 @@
     <Language Id="GB" />
   </Languages>
   <Texts>
-    <TextGroup Id="Group1" />
+    <TextGroup Id="Group1">
+      <Text Id="ResourceId3" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">New Text</Translation>
+      </Text>
+    </TextGroup>
     <TextGroup Id="Unsorted">
+      <Text Id="__SingleUse_CNRD" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">New Text</Translation>
+      </Text>
+      <Text Id="__SingleUse_IO7Y" Alignment="Center" TypographyId="Default">
+        <Translation Language="GB">Running</Translation>
+      </Text>
+      <Text Id="__SingleUse_5N9O" Alignment="Center" TypographyId="Default">
+        <Translation Language="GB">Idle</Translation>
+      </Text>
+      <Text Id="ResourceId2" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Running</Translation>
+      </Text>
+      <Text Id="ResourceId1" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">Idle</Translation>
+      </Text>
       <Text Id="__SingleUse_YKAF" Alignment="Left" TypographyId="Default">
         <Translation Language="GB">BAT:</Translation>
       </Text>
@@ -34,7 +53,7 @@
         <Translation Language="GB">System state</Translation>
       </Text>
       <Text Id="__SingleUse_6JRP" Alignment="Center" TypographyId="Default">
-        <Translation Language="GB">Idle</Translation>
+        <Translation Language="GB"></Translation>
       </Text>
       <Text Id="__SingleUse_VQEF" Alignment="Center" TypographyId="Default">
         <Translation Language="GB">Discharging</Translation>

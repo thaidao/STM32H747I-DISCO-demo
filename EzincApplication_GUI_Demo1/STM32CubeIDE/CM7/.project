@@ -827,9 +827,44 @@
 			<locationURI>PARENT-2-PROJECT_LOC/CM7/TouchGFX/generated/images/src/__generated/image_alternate_theme_images_widgets_togglebutton_large_round_text_on_active.cpp</locationURI>
 		</link>
 		<link>
+			<name>Application/User/generated/image_ActiveState_Image.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/CM7/TouchGFX/generated/images/src/image_ActiveState_Image.cpp</locationURI>
+		</link>
+		<link>
+			<name>Application/User/generated/image_StateBg_604x178_error.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/CM7/TouchGFX/generated/images/src/image_StateBg_604x178_error.cpp</locationURI>
+		</link>
+		<link>
+			<name>Application/User/generated/image_StateBg_604x178_errorFrame.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/CM7/TouchGFX/generated/images/src/image_StateBg_604x178_errorFrame.cpp</locationURI>
+		</link>
+		<link>
+			<name>Application/User/generated/image_StateBg_604x178_running.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/CM7/TouchGFX/generated/images/src/image_StateBg_604x178_running.cpp</locationURI>
+		</link>
+		<link>
+			<name>Application/User/generated/image_background_142x178.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/CM7/TouchGFX/generated/images/src/image_background_142x178.cpp</locationURI>
+		</link>
+		<link>
+			<name>Application/User/generated/image_background_142x178_error.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/CM7/TouchGFX/generated/images/src/image_background_142x178_error.cpp</locationURI>
+		</link>
+		<link>
 			<name>Application/User/generated/image_background_600x200.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/CM7/TouchGFX/generated/images/src/image_background_600x200.cpp</locationURI>
+		</link>
+		<link>
+			<name>Application/User/generated/image_background_600x200_-_Copy.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/CM7/TouchGFX/generated/images/src/image_background_600x200_-_Copy.cpp</locationURI>
 		</link>
 		<link>
 			<name>Application/User/generated/image_background_600x200_arrow1.cpp</name>
