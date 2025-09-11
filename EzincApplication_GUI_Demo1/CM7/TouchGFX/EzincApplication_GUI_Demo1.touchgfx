@@ -440,7 +440,7 @@
             },
             "Action": {
               "Type": "ActionExecuteCode",
-              "Code": "Unicode::snprintfFloat(\r\n    textArea_CurrentSensorBuffer,\r\n    TEXTAREA_CURRENTSENSOR_SIZE,\r\n    \"%.1f\",\r\n    (float)PumpCurrentSensor_slider.getValue() / 100.0f\r\n);\r\ntextArea_CurrentSensor.invalidate();"
+              "Code": "float currentSensorVal = (float)PumpCurrentSensor_slider.getValue() / 100.0f;\r\n\r\nUnicode::snprintfFloat(\r\n    textArea_CurrentSensorBuffer,\r\n    TEXTAREA_CURRENTSENSOR_SIZE,\r\n    \"%.1f\",\r\n    currentSensorVal \r\n);\r\n\r\nif(currentSensorVal<1 || currentSensorVal >1.3)\r\n{\r\n\timagePumpError.setAlpha(255);\r\n}\r\nelse\r\n{\r\n\timagePumpError.setAlpha(0);\r\n}\r\n\r\ntextArea_CurrentSensor.invalidate();\r\nimagePumpError.invalidate();"
             }
           },
           {
@@ -462,7 +462,7 @@
             },
             "Action": {
               "Type": "ActionExecuteCode",
-              "Code": "    if (&src == &toggleButton1_SysOnOff)\r\n    {\r\n\t\tif(toggleButton1_SysOnOff.getState()){\r\n\t\t\t//Bt_SysOnOff_Clicked\r\n\t\t\t//When toggleButton1_SysOnOff clicked fade buttonInit\r\n\t\t\t//Set alpha to 255 on buttonInit\r\n\t\t\tbuttonInit.setAlpha(255);\r\n\t\t}else\r\n\t\t{\r\n\t\t\tbuttonInit.setAlpha(150);\r\n\t\t\tbuttonStandby.setAlpha(150);\r\n\t\t\tbuttonCharging.setAlpha(150);\r\n\t\t\tbuttonDischarging.setAlpha(150);\r\n\r\n\t\t\tPumpCurrentSensor_slider.setValue(0);\r\n\t\t\tVoltageSensor_slider.setValue(0);\r\n\t\t}\r\n        buttonInit.invalidate();\r\n    }"
+              "Code": "    if (&src == &toggleButton1_SysOnOff)\r\n    {\r\n\t\tif(toggleButton1_SysOnOff.getState()){\r\n\t\t\t//Bt_SysOnOff_Clicked\r\n\t\t\t//When toggleButton1_SysOnOff clicked fade buttonInit\r\n\t\t\t//Set alpha to 255 on buttonInit\r\n\t\t\tbuttonInit.setAlpha(255);\r\n\t\t\t\r\n//buttonInit.startAnimationDelay(2000, touchgfx::EasingEquations::linearEaseNone, 1);\r\n//\t\t\tbuttonInit.setAlpha(150);\r\n//\t\t\tbuttonStandby.setAlpha(255);\r\n\t\t}else\r\n\t\t{\r\n\t\t\tbuttonInit.setAlpha(150);\r\n\t\t\tbuttonStandby.setAlpha(150);\r\n\t\t\tbuttonCharging.setAlpha(150);\r\n\t\t\tbuttonDischarging.setAlpha(150);\r\n\r\n\t\t\tPumpCurrentSensor_slider.setValue(0);\r\n\t\t\tVoltageSensor_slider.setValue(0);\r\n\t\t}\r\n        buttonInit.invalidate();\r\n    }"
             }
           },
           {
@@ -495,7 +495,7 @@
             },
             "Action": {
               "Type": "ActionExecuteCode",
-              "Code": "Unicode::snprintfFloat(\r\n    textArea_VoltageSensorBuffer,\r\n    TEXTAREA_VOLTAGESENSOR_SIZE,\r\n    \"%.1f\",\r\n    (float)VoltageSensor_slider.getValue() / 100.0f\r\n);\r\ntextArea_VoltageSensor.invalidate();"
+              "Code": "float voltageSensorVal =     (float)VoltageSensor_slider.getValue() / 100.0f;\r\n\r\nUnicode::snprintfFloat(\r\n    textArea_VoltageSensorBuffer,\r\n    TEXTAREA_VOLTAGESENSOR_SIZE,\r\n    \"%.1f\",\r\n    voltageSensorVal\r\n);\r\n\r\nif((voltageSensorVal >0.9 && voltageSensorVal <1.3)||(voltageSensorVal >2.1 && voltageSensorVal <2.5))\r\n{\r\n\tSysStateBgError.setAlpha(0);\r\n}\r\nelse\r\n{\r\n\tSysStateBgError.setAlpha(255);\r\n}\r\n\r\ntextArea_VoltageSensor.invalidate();\r\nSysStateBgError.invalidate();"
             }
           }
         ]
