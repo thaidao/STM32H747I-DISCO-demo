@@ -63,7 +63,7 @@
             "BackgroundX": 16,
             "BackgroundY": 11,
             "IndicatorMax": 300,
-            "ValueMax": 100,
+            "ValueMax": 200,
             "Preset": "alternate_theme\\presets\\slider\\horizontal\\thick\\medium_rounded_dark.json"
           },
           {
@@ -80,7 +80,7 @@
             "BackgroundX": 16,
             "BackgroundY": 11,
             "IndicatorMax": 300,
-            "ValueMax": 100,
+            "ValueMax": 300,
             "Preset": "alternate_theme\\presets\\slider\\horizontal\\thick\\medium_rounded_dark.json"
           },
           {
@@ -261,14 +261,19 @@
             "Y": 64,
             "Width": 33,
             "Height": 24,
-            "TextId": "__SingleUse_OSBY",
+            "TextId": "PUMP_SENSOR_TEXT_AREA",
             "TextRotation": "0",
             "Color": {
               "Red": 255,
               "Green": 255,
               "Blue": 255
             },
-            "AutoSize": true
+            "AutoSize": true,
+            "Wildcard1": {
+              "TextId": "__SingleUse_AMNW",
+              "UseBuffer": true,
+              "BufferSize": 10
+            }
           },
           {
             "Type": "TextArea",
@@ -288,7 +293,7 @@
           },
           {
             "Type": "TextArea",
-            "Name": "textArea_VoltageSensor_unit_1",
+            "Name": "textArea_BAT",
             "X": 513,
             "Y": 64,
             "Width": 46,
@@ -309,18 +314,23 @@
             "Y": 64,
             "Width": 33,
             "Height": 24,
-            "TextId": "__SingleUse_UG5D",
+            "TextId": "VOLTAGE_SENSOR_TEXT_AREA",
             "TextRotation": "0",
             "Color": {
               "Red": 255,
               "Green": 255,
               "Blue": 255
             },
-            "AutoSize": true
+            "AutoSize": true,
+            "Wildcard1": {
+              "TextId": "__SingleUse_6WP5",
+              "UseBuffer": true,
+              "BufferSize": 10
+            }
           },
           {
             "Type": "TextArea",
-            "Name": "textArea1_1",
+            "Name": "textArea_Pump",
             "X": 649,
             "Y": 64,
             "Width": 65,
@@ -429,8 +439,8 @@
               "TriggerComponent": "PumpCurrentSensor_slider"
             },
             "Action": {
-              "Type": "ActionSetText",
-              "TextId": "__SingleUse_CNRD"
+              "Type": "ActionExecuteCode",
+              "Code": "Unicode::snprintfFloat(\r\n    textArea_CurrentSensorBuffer,\r\n    TEXTAREA_CURRENTSENSOR_SIZE,\r\n    \"%.1f\",\r\n    (float)PumpCurrentSensor_slider.getValue() / 100.0f\r\n);\r\ntextArea_CurrentSensor.invalidate();"
             }
           },
           {
@@ -440,7 +450,8 @@
               "TriggerComponent": "VoltageSensor_slider"
             },
             "Action": {
-              "Type": "ActionExecuteCode"
+              "Type": "ActionExecuteCode",
+              "Code": "Unicode::snprintfFloat(\r\n    textArea_VoltageSensorBuffer,\r\n    TEXTAREA_VOLTAGESENSOR_SIZE,\r\n    \"%.1f\",\r\n    (float)VoltageSensor_slider.getValue() / 100.0f\r\n);\r\ntextArea_VoltageSensor.invalidate();"
             }
           },
           {
@@ -452,6 +463,39 @@
             "Action": {
               "Type": "ActionExecuteCode",
               "Code": "    if (&src == &toggleButton1_SysOnOff)\r\n    {\r\n\t\tif(toggleButton1_SysOnOff.getState()){\r\n\t\t\t//Bt_SysOnOff_Clicked\r\n\t\t\t//When toggleButton1_SysOnOff clicked fade buttonInit\r\n\t\t\t//Set alpha to 255 on buttonInit\r\n\t\t\tbuttonInit.setAlpha(255);\r\n\t\t}else\r\n\t\t{\r\n\t\t\tbuttonInit.setAlpha(150);\r\n\t\t\tbuttonStandby.setAlpha(150);\r\n\t\t\tbuttonCharging.setAlpha(150);\r\n\t\t\tbuttonDischarging.setAlpha(150);\r\n\r\n\t\t\tPumpCurrentSensor_slider.setValue(0);\r\n\t\t\tVoltageSensor_slider.setValue(0);\r\n\t\t}\r\n        buttonInit.invalidate();\r\n    }"
+            }
+          },
+          {
+            "InteractionName": "PumpCurrentSensorSlider_AdjConfirmed",
+            "Trigger": {
+              "Type": "TriggerSliderValueConfirmed",
+              "TriggerComponent": "PumpCurrentSensor_slider"
+            },
+            "Action": {
+              "Type": "ActionExecuteCode",
+              "Code": "Unicode::snprintfFloat(\r\n    textArea_CurrentSensorBuffer,\r\n    TEXTAREA_CURRENTSENSOR_SIZE,\r\n    \"%.1f\",\r\n    (float)PumpCurrentSensor_slider.getValue() / 100.0f\r\n);\r\ntextArea_CurrentSensor.invalidate();"
+            }
+          },
+          {
+            "InteractionName": "VoltageSensorSlider_AdjConfirmed",
+            "Trigger": {
+              "Type": "TriggerSliderValueConfirmed",
+              "TriggerComponent": "VoltageSensor_slider"
+            },
+            "Action": {
+              "Type": "ActionExecuteCode",
+              "Code": "Unicode::snprintfFloat(\r\n    textArea_VoltageSensorBuffer,\r\n    TEXTAREA_VOLTAGESENSOR_SIZE,\r\n    \"%.1f\",\r\n    (float)VoltageSensor_slider.getValue() / 100.0f\r\n);\r\ntextArea_VoltageSensor.invalidate();"
+            }
+          },
+          {
+            "InteractionName": "VoltageSensorSlider_ChangeValue",
+            "Trigger": {
+              "Type": "TriggerSliderValueChanged",
+              "TriggerComponent": "VoltageSensor_slider"
+            },
+            "Action": {
+              "Type": "ActionExecuteCode",
+              "Code": "Unicode::snprintfFloat(\r\n    textArea_VoltageSensorBuffer,\r\n    TEXTAREA_VOLTAGESENSOR_SIZE,\r\n    \"%.1f\",\r\n    (float)VoltageSensor_slider.getValue() / 100.0f\r\n);\r\ntextArea_VoltageSensor.invalidate();"
             }
           }
         ]

@@ -5,13 +5,19 @@
   </Languages>
   <Texts>
     <TextGroup Id="Group1">
-      <Text Id="ResourceId3" Alignment="Left" TypographyId="Default">
-        <Translation Language="GB">New Text</Translation>
+      <Text Id="VOLTAGE_SENSOR_TEXT_AREA" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">&lt;%s&gt;</Translation>
+      </Text>
+      <Text Id="PUMP_SENSOR_TEXT_AREA" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">&lt;%s&gt;</Translation>
       </Text>
     </TextGroup>
     <TextGroup Id="Unsorted">
-      <Text Id="__SingleUse_CNRD" Alignment="Left" TypographyId="Default">
-        <Translation Language="GB">New Text</Translation>
+      <Text Id="__SingleUse_6WP5" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">0.0</Translation>
+      </Text>
+      <Text Id="__SingleUse_AMNW" Alignment="Left" TypographyId="Default">
+        <Translation Language="GB">0.0</Translation>
       </Text>
       <Text Id="__SingleUse_IO7Y" Alignment="Center" TypographyId="Default">
         <Translation Language="GB">Running</Translation>
@@ -33,12 +39,6 @@
       </Text>
       <Text Id="__SingleUse_9AL7" Alignment="Left" TypographyId="Default">
         <Translation Language="GB">A</Translation>
-      </Text>
-      <Text Id="__SingleUse_UG5D" Alignment="Left" TypographyId="Default">
-        <Translation Language="GB">0.0</Translation>
-      </Text>
-      <Text Id="__SingleUse_OSBY" Alignment="Left" TypographyId="Default">
-        <Translation Language="GB">0.0</Translation>
       </Text>
       <Text Id="__SingleUse_72GZ" Alignment="Left" TypographyId="Typography_00">
         <Translation Language="GB">Voltage sensor (0~3V)</Translation>
@@ -70,7 +70,7 @@
     </TextGroup>
   </Texts>
   <Typographies>
-    <Typography Id="Default" Font="verdana.ttf" Size="20" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" />
+    <Typography Id="Default" Font="verdana.ttf" Size="20" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" WildcardCharacters="0123456789." />
     <Typography Id="Large" Font="verdana.ttf" Size="40" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" />
     <Typography Id="Small" Font="verdana.ttf" Size="10" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" />
     <Typography Id="Typography_00" Font="verdana.ttf" Size="16" Bpp="4" IsVector="no" Direction="LTR" FallbackCharacter="?" />
