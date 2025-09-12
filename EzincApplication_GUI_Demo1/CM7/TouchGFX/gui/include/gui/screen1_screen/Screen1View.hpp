@@ -11,6 +11,13 @@ public:
     virtual ~Screen1View() {}
     virtual void setupScreen();
     virtual void tearDownScreen();
+
+    void sliderValueChangedCallbackHandler(const touchgfx::Slider& src, int value);
+	void sliderValueConfirmedCallbackHandler(const touchgfx::Slider& src, int value);
+
+	void enableButtonWithLabel(touchgfx::ButtonWithLabel &button);
+	bool isSystemError();
+
 protected:
 };
 
