@@ -51,13 +51,29 @@ void Screen1View::sliderValueChangedCallbackHandler(const touchgfx::Slider& src,
             currentSensorVal
         );
 
+        //Error
         if(currentSensorVal<1 || currentSensorVal >1.3)
         {
         	imagePumpError.setAlpha(255);
+        	enableButtonWithLabel(buttonStandby);
         }
         else
         {
         	imagePumpError.setAlpha(0);
+
+            float voltageSensorVal =     (float)VoltageSensor_slider.getValue() / 100.0f;
+
+            if(voltageSensorVal >0.9 && voltageSensorVal <1.3)
+            {
+                enableButtonWithLabel(buttonDischarging);
+            }
+            else if (voltageSensorVal >2.1 && voltageSensorVal <2.5)
+    		{
+                enableButtonWithLabel(buttonCharging);
+    		}else
+            {
+            	enableButtonWithLabel(buttonStandby);
+            }
         }
 
         textArea_CurrentSensor.invalidate();
