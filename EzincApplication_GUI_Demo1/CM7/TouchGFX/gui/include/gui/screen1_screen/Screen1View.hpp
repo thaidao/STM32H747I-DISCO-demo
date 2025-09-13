@@ -14,11 +14,15 @@ public:
 
     void sliderValueChangedCallbackHandler(const touchgfx::Slider& src, int value);
 	void sliderValueConfirmedCallbackHandler(const touchgfx::Slider& src, int value);
+	void buttonCallbackHandler(const touchgfx::AbstractButton& src);
 
 	void enableButtonWithLabel(touchgfx::ButtonWithLabel &button);
 	bool isSystemError();
+	bool isSystemCharging();
+	void showPumpRunningStatus(bool bYes);
 
 protected:
+	bool bSystemOn = false;
 };
 
 #endif // SCREEN1VIEW_HPP
