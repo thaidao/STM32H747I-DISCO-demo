@@ -331,8 +331,8 @@ void Screen1View::handleTickEvent()
 	{
 		waitCounter++;
 
-		// At 60 FPS, 60 ticks ≈ 1 second
-		if (waitCounter >= 60)
+		// At 90 FPS, 90 ticks ≈ 1.5 second
+		if (waitCounter >= 90)
 		{
 			waitTimerActive = false;
 
@@ -369,6 +369,7 @@ void Screen1View::handleTickEvent()
 				SysStateBgError.setAlpha(0);
 			}
 
+			buttonInit.invalidate();
 			buttonStandby.invalidate();
 			buttonCharging.invalidate();
 			buttonDischarging.invalidate();
