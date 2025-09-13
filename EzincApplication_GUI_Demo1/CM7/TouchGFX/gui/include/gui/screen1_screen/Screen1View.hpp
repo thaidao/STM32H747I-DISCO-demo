@@ -11,6 +11,7 @@ public:
     virtual ~Screen1View() {}
     virtual void setupScreen();
     virtual void tearDownScreen();
+    virtual void handleTickEvent() override;
 
     void sliderValueChangedCallbackHandler(const touchgfx::Slider& src, int value);
 	void sliderValueConfirmedCallbackHandler(const touchgfx::Slider& src, int value);
@@ -18,11 +19,19 @@ public:
 
 	void enableButtonWithLabel(touchgfx::ButtonWithLabel &button);
 	bool isSystemError();
+	bool isSystemVoltageError();
+	bool isSystemPumpCurrentError();
+
 	bool isSystemCharging();
 	void showPumpRunningStatus(bool bYes);
 
 protected:
 	bool bSystemOn = false;
+
+private:
+    bool waitTimerActive;       // true when waiting for 1 sec
+    uint16_t waitCounter;       // counts ticks (~60 ticks = 1 sec)
+    bool lastToggleState;       // store last toggleButton1_SysOnOff state
 };
 
 #endif // SCREEN1VIEW_HPP
