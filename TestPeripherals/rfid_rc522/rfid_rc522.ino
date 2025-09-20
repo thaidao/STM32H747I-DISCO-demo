@@ -20,6 +20,8 @@ void setup() {
   SPI.begin(); // init SPI bus
   rfid.PCD_Init(); // init MFRC522
 
+  // initialize digital pin LED_BUILTIN as an output.
+  pinMode(LED_GREEN, OUTPUT);
   Serial.println("Tap an RFID/NFC tag on the RFID-RC522 reader");
 }
 
@@ -41,5 +43,10 @@ void loop() {
       rfid.PICC_HaltA(); // halt PICC
       rfid.PCD_StopCrypto1(); // stop encryption on PCD
     }
+
+    digitalWrite(LED_GREEN, HIGH);  // turn the LED on (HIGH is the voltage level)
+    delay(200);                      // wait for a second
+    digitalWrite(LED_GREEN, LOW);   // turn the LED off by making the voltage LOW
+    delay(200);
   }
 }
