@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "cmsis_os.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -56,6 +57,37 @@
 UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_usart1_rx;
 
+/* Definitions for workerTask */
+osThreadId_t workerTaskHandle;
+const osThreadAttr_t workerTask_attributes = {
+  .name = "workerTask",
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for uart1Task */
+osThreadId_t uart1TaskHandle;
+const osThreadAttr_t uart1Task_attributes = {
+  .name = "uart1Task",
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for ledTask */
+osThreadId_t ledTaskHandle;
+const osThreadAttr_t ledTask_attributes = {
+  .name = "ledTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
+/* Definitions for uart1_Rx_Queue */
+osMessageQueueId_t uart1_Rx_QueueHandle;
+const osMessageQueueAttr_t uart1_Rx_Queue_attributes = {
+  .name = "uart1_Rx_Queue"
+};
+/* Definitions for ledCmdQueue */
+osMessageQueueId_t ledCmdQueueHandle;
+const osMessageQueueAttr_t ledCmdQueue_attributes = {
+  .name = "ledCmdQueue"
+};
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -66,6 +98,10 @@ void PeriphCommonClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_USART1_UART_Init(void);
+void StartWorkerTask(void *argument);
+void StartUart1Task(void *argument);
+void StartLEDTask(void *argument);
+
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -147,6 +183,55 @@ Error_Handler();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
+
+  /* Init scheduler */
+  osKernelInitialize();
+
+  /* USER CODE BEGIN RTOS_MUTEX */
+  /* add mutexes, ... */
+  /* USER CODE END RTOS_MUTEX */
+
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* add semaphores, ... */
+  /* USER CODE END RTOS_SEMAPHORES */
+
+  /* USER CODE BEGIN RTOS_TIMERS */
+  /* start timers, add new ones, ... */
+  /* USER CODE END RTOS_TIMERS */
+
+  /* Create the queue(s) */
+  /* creation of uart1_Rx_Queue */
+  uart1_Rx_QueueHandle = osMessageQueueNew (16, 32, &uart1_Rx_Queue_attributes);
+
+  /* creation of ledCmdQueue */
+  ledCmdQueueHandle = osMessageQueueNew (8, 32, &ledCmdQueue_attributes);
+
+  /* USER CODE BEGIN RTOS_QUEUES */
+  /* add queues, ... */
+  /* USER CODE END RTOS_QUEUES */
+
+  /* Create the thread(s) */
+  /* creation of workerTask */
+  workerTaskHandle = osThreadNew(StartWorkerTask, NULL, &workerTask_attributes);
+
+  /* creation of uart1Task */
+  uart1TaskHandle = osThreadNew(StartUart1Task, NULL, &uart1Task_attributes);
+
+  /* creation of ledTask */
+  ledTaskHandle = osThreadNew(StartLEDTask, NULL, &ledTask_attributes);
+
+  /* USER CODE BEGIN RTOS_THREADS */
+  /* add threads, ... */
+  /* USER CODE END RTOS_THREADS */
+
+  /* USER CODE BEGIN RTOS_EVENTS */
+  /* add events, ... */
+  /* USER CODE END RTOS_EVENTS */
+
+  /* Start scheduler */
+  osKernelStart();
+
+  /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -307,7 +392,7 @@ static void MX_DMA_Init(void)
 
   /* DMA interrupt init */
   /* DMA1_Stream0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream0_IRQn);
 
 }
@@ -356,6 +441,60 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
+
+/* USER CODE BEGIN Header_StartWorkerTask */
+/**
+  * @brief  Function implementing the workerTask thread.
+  * @param  argument: Not used
+  * @retval None
+  */
+/* USER CODE END Header_StartWorkerTask */
+void StartWorkerTask(void *argument)
+{
+  /* USER CODE BEGIN 5 */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END 5 */
+}
+
+/* USER CODE BEGIN Header_StartUart1Task */
+/**
+* @brief Function implementing the uart1Task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartUart1Task */
+void StartUart1Task(void *argument)
+{
+  /* USER CODE BEGIN StartUart1Task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartUart1Task */
+}
+
+/* USER CODE BEGIN Header_StartLEDTask */
+/**
+* @brief Function implementing the ledTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartLEDTask */
+void StartLEDTask(void *argument)
+{
+  /* USER CODE BEGIN StartLEDTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartLEDTask */
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.
