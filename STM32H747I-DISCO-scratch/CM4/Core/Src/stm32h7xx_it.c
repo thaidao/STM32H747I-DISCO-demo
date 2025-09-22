@@ -55,6 +55,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+extern DMA_HandleTypeDef hdma_usart1_rx;
 extern CEC_HandleTypeDef hcec;
 /* USER CODE BEGIN EV */
 
