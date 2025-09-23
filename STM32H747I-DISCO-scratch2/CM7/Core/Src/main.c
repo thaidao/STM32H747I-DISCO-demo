@@ -68,6 +68,23 @@ const osThreadAttr_t ledTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
+/* Definitions for uart1Task */
+osThreadId_t uart1TaskHandle;
+const osThreadAttr_t uart1Task_attributes = {
+  .name = "uart1Task",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for ledCmdQueue */
+osMessageQueueId_t ledCmdQueueHandle;
+const osMessageQueueAttr_t ledCmdQueue_attributes = {
+  .name = "ledCmdQueue"
+};
+/* Definitions for uart1RxDMAQueue */
+osMessageQueueId_t uart1RxDMAQueueHandle;
+const osMessageQueueAttr_t uart1RxDMAQueue_attributes = {
+  .name = "uart1RxDMAQueue"
+};
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -78,6 +95,7 @@ void PeriphCommonClock_Config(void);
 static void MX_GPIO_Init(void);
 void StartDefaultTask(void *argument);
 void StarLEDTask(void *argument);
+void StartUart1Task(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -174,6 +192,13 @@ Error_Handler();
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
 
+  /* Create the queue(s) */
+  /* creation of ledCmdQueue */
+  ledCmdQueueHandle = osMessageQueueNew (8, 32, &ledCmdQueue_attributes);
+
+  /* creation of uart1RxDMAQueue */
+  uart1RxDMAQueueHandle = osMessageQueueNew (8, 128, &uart1RxDMAQueue_attributes);
+
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
@@ -184,6 +209,9 @@ Error_Handler();
 
   /* creation of ledTask */
   ledTaskHandle = osThreadNew(StarLEDTask, NULL, &ledTask_attributes);
+
+  /* creation of uart1Task */
+  uart1TaskHandle = osThreadNew(StartUart1Task, NULL, &uart1Task_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -314,10 +342,11 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOI_CLK_ENABLE();
+  __HAL_RCC_GPIOK_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOI, LED1_Pin|LED2_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin : CEC_CK_MCO1_Pin */
   GPIO_InitStruct.Pin = CEC_CK_MCO1_Pin;
@@ -327,12 +356,18 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Alternate = GPIO_AF0_MCO;
   HAL_GPIO_Init(CEC_CK_MCO1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : LED1_Pin */
-  GPIO_InitStruct.Pin = LED1_Pin;
+  /*Configure GPIO pins : LED1_Pin LED2_Pin */
+  GPIO_InitStruct.Pin = LED1_Pin|LED2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LED1_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOI, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : JOY_SEL_Pin */
+  GPIO_InitStruct.Pin = JOY_SEL_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(JOY_SEL_GPIO_Port, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
@@ -381,6 +416,24 @@ void StarLEDTask(void *argument)
 
   }
   /* USER CODE END StarLEDTask */
+}
+
+/* USER CODE BEGIN Header_StartUart1Task */
+/**
+* @brief Function implementing the uart1Task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartUart1Task */
+void StartUart1Task(void *argument)
+{
+  /* USER CODE BEGIN StartUart1Task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartUart1Task */
 }
 
 /**

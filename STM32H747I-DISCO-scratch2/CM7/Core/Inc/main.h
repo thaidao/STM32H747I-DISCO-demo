@@ -65,6 +65,10 @@ void Error_Handler(void);
 #define CEC_CK_MCO1_GPIO_Port GPIOA
 #define LED1_Pin GPIO_PIN_12
 #define LED1_GPIO_Port GPIOI
+#define LED2_Pin GPIO_PIN_13
+#define LED2_GPIO_Port GPIOI
+#define JOY_SEL_Pin GPIO_PIN_2
+#define JOY_SEL_GPIO_Port GPIOK
 #define OSC_OUT_Pin GPIO_PIN_1
 #define OSC_OUT_GPIO_Port GPIOH
 #define OSC_IN_Pin GPIO_PIN_0
