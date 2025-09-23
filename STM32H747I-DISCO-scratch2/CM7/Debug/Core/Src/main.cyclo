@@ -6,5 +6,5 @@
 ../Core/Src/main.c:437:13:MX_GPIO_Init	1
 ../Core/Src/main.c:492:6:StartDefaultTask	1
 ../Core/Src/main.c:510:6:StarLEDTask	1
-../Core/Src/main.c:534:6:StartUart1Task	1
-../Core/Src/main.c:559:6:Error_Handler	1
+../Core/Src/main.c:534:6:StartUart1Task	2
+../Core/Src/main.c:567:6:Error_Handler	1

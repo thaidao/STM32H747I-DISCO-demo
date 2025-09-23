@@ -7,4 +7,4 @@
 ../Core/Src/main.c:492:6:StartDefaultTask	16	static
 ../Core/Src/main.c:510:6:StarLEDTask	16	static
 ../Core/Src/main.c:534:6:StartUart1Task	40	static
-../Core/Src/main.c:559:6:Error_Handler	4	static,ignoring_inline_asm
+../Core/Src/main.c:567:6:Error_Handler	4	static,ignoring_inline_asm

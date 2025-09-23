@@ -540,14 +540,22 @@ void StartUart1Task(void *argument)
   /* Infinite loop */
   for(;;)
   {
-	  //
+#if 0
 	  status = HAL_UART_Transmit(&huart1, msg, sizeof(msg), 1000);
 	  if(status != HAL_OK)
 	  {
 		  //Handle error here @todo
 	  }
 
+
 	  osDelay(1000);
+#else
+	  status = HAL_UART_Receive(&huart1, msg, 1, 1000);
+	  if(status == HAL_OK)
+	  {
+		  HAL_UART_Transmit(&huart1, msg, 1, 1000);
+	  }
+#endif
   }
   /* USER CODE END StartUart1Task */
 }
