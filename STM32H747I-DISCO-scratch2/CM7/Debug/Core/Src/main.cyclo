@@ -1,7 +1,8 @@
-../Core/Src/main.c:95:5:main	7
-../Core/Src/main.c:216:6:SystemClock_Config	4
-../Core/Src/main.c:279:6:PeriphCommonClock_Config	2
-../Core/Src/main.c:306:13:MX_GPIO_Init	1
-../Core/Src/main.c:353:6:StartDefaultTask	1
-../Core/Src/main.c:371:6:StarLEDTask	1
-../Core/Src/main.c:390:6:Error_Handler	1
+../Core/Src/main.c:113:5:main	7
+../Core/Src/main.c:244:6:SystemClock_Config	4
+../Core/Src/main.c:307:6:PeriphCommonClock_Config	2
+../Core/Src/main.c:334:13:MX_GPIO_Init	1
+../Core/Src/main.c:388:6:StartDefaultTask	1
+../Core/Src/main.c:406:6:StarLEDTask	1
+../Core/Src/main.c:430:6:StartUart1Task	1
+../Core/Src/main.c:445:6:Error_Handler	1
