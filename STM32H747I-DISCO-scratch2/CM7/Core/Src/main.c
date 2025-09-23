@@ -534,10 +534,20 @@ void StarLEDTask(void *argument)
 void StartUart1Task(void *argument)
 {
   /* USER CODE BEGIN StartUart1Task */
+	HAL_StatusTypeDef status = HAL_OK;
+	uint8_t msg[] = "\n\rHello A.U.G";
+
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+	  //
+	  status = HAL_UART_Transmit(&huart1, msg, sizeof(msg), 1000);
+	  if(status != HAL_OK)
+	  {
+		  //Handle error here @todo
+	  }
+
+	  osDelay(1000);
   }
   /* USER CODE END StartUart1Task */
 }
