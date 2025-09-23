@@ -69,10 +69,6 @@ void Error_Handler(void);
 #define ULPI_D7_GPIO_Port GPIOB
 #define QSPI_BK2_IO2_Pin GPIO_PIN_9
 #define QSPI_BK2_IO2_GPIO_Port GPIOG
-#define PMOD_2__USART2_TX_Pin GPIO_PIN_5
-#define PMOD_2__USART2_TX_GPIO_Port GPIOD
-#define PMOD_4__USART2_RTS_Pin GPIO_PIN_4
-#define PMOD_4__USART2_RTS_GPIO_Port GPIOD
 #define SDIO1_D2_Pin GPIO_PIN_10
 #define SDIO1_D2_GPIO_Port GPIOC
 #define FMC_D25_Pin GPIO_PIN_1
@@ -87,8 +83,6 @@ void Error_Handler(void);
 #define HDMI_CEC_GPIO_Port GPIOB
 #define ETH_TX_EN_Pin GPIO_PIN_11
 #define ETH_TX_EN_GPIO_Port GPIOG
-#define PMOD_3__USART2_RX_Pin GPIO_PIN_6
-#define PMOD_3__USART2_RX_GPIO_Port GPIOD
 #define PMOD_18_DFSDM_CKOUT_Pin GPIO_PIN_3
 #define PMOD_18_DFSDM_CKOUT_GPIO_Port GPIOD
 #define SDIO1_D3_Pin GPIO_PIN_11
@@ -133,10 +127,6 @@ void Error_Handler(void);
 #define SDIO1_CMD_GPIO_Port GPIOD
 #define FMC_D2_Pin GPIO_PIN_0
 #define FMC_D2_GPIO_Port GPIOD
-#define STLINK_TX_Pin GPIO_PIN_10
-#define STLINK_TX_GPIO_Port GPIOA
-#define STLINK_RX_Pin GPIO_PIN_9
-#define STLINK_RX_GPIO_Port GPIOA
 #define FMC_D21_Pin GPIO_PIN_13
 #define FMC_D21_GPIO_Port GPIOH
 #define FMC_D30_Pin GPIO_PIN_9
@@ -223,8 +213,6 @@ void Error_Handler(void);
 #define ETH_MDIO_GPIO_Port GPIOA
 #define ETH_REF_CLK_Pin GPIO_PIN_1
 #define ETH_REF_CLK_GPIO_Port GPIOA
-#define PMOD_1__USART2_CTS_NSS_Pin GPIO_PIN_0
-#define PMOD_1__USART2_CTS_NSS_GPIO_Port GPIOA
 #define FMC_D7_Pin GPIO_PIN_10
 #define FMC_D7_GPIO_Port GPIOE
 #define ARD_D1_Pin GPIO_PIN_8

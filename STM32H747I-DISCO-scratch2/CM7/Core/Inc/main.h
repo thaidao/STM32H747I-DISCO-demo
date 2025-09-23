@@ -57,10 +57,20 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define PMOD_2__USART2_TX_Pin GPIO_PIN_5
+#define PMOD_2__USART2_TX_GPIO_Port GPIOD
+#define PMOD_4__USART2_RTS_Pin GPIO_PIN_4
+#define PMOD_4__USART2_RTS_GPIO_Port GPIOD
+#define PMOD_3__USART2_RX_Pin GPIO_PIN_6
+#define PMOD_3__USART2_RX_GPIO_Port GPIOD
 #define OSC32_OUT_Pin GPIO_PIN_15
 #define OSC32_OUT_GPIO_Port GPIOC
 #define OSC32_IN_Pin GPIO_PIN_14
 #define OSC32_IN_GPIO_Port GPIOC
+#define STLINK_TX_Pin GPIO_PIN_10
+#define STLINK_TX_GPIO_Port GPIOA
+#define STLINK_RX_Pin GPIO_PIN_9
+#define STLINK_RX_GPIO_Port GPIOA
 #define CEC_CK_MCO1_Pin GPIO_PIN_8
 #define CEC_CK_MCO1_GPIO_Port GPIOA
 #define LED1_Pin GPIO_PIN_12
@@ -73,6 +83,8 @@ void Error_Handler(void);
 #define OSC_OUT_GPIO_Port GPIOH
 #define OSC_IN_Pin GPIO_PIN_0
 #define OSC_IN_GPIO_Port GPIOH
+#define PMOD_1__USART2_CTS_NSS_Pin GPIO_PIN_0
+#define PMOD_1__USART2_CTS_NSS_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 
