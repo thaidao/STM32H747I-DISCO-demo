@@ -27,6 +27,43 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+typedef enum{
+	I2C_REQ_READ =0,
+	I2C_REQ_WRITE
+} eI2C_ReqType_t;
+
+typedef struct
+{
+	eI2C_ReqType_t 	type;
+	uint16_t		address;	//support 7 bits and 10 bits
+	uint8_t*		pdata;
+	uint8_t			size; //max 255
+	uint8_t			timeout; //@todo check type later
+	uint8_t			retry; 		//number of retry time
+
+}stI2C_Request_t;
+
+typedef struct
+{
+	uint8_t			status;		//@todo
+	uint16_t		address;	//support 7 bits and 10 bits
+	uint8_t			*pdata;
+	uint8_t			size; //
+}stI2C_Response_t;
+
+typedef enum{
+	lED_OFF =0,
+	lED_ON,
+	lED_TOGGLE,
+	lED_BLINK
+} eLED_CmdType_t;
+
+typedef struct
+{
+	eLED_CmdType_t 	type;
+	uint8_t			index;
+	unit8_t			param;
+} stLED_Cmd_t;
 
 /* USER CODE END PTD */
 
@@ -54,6 +91,8 @@
 
 /* Private variables ---------------------------------------------------------*/
 
+I2C_HandleTypeDef hi2c4;
+
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 
@@ -78,6 +117,13 @@ const osThreadAttr_t uart1Task_attributes = {
   .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for i2cTask */
+osThreadId_t i2cTaskHandle;
+const osThreadAttr_t i2cTask_attributes = {
+  .name = "i2cTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityHigh,
+};
 /* Definitions for ledCmdQueue */
 osMessageQueueId_t ledCmdQueueHandle;
 const osMessageQueueAttr_t ledCmdQueue_attributes = {
@@ -87,6 +133,16 @@ const osMessageQueueAttr_t ledCmdQueue_attributes = {
 osMessageQueueId_t uart1RxDMAQueueHandle;
 const osMessageQueueAttr_t uart1RxDMAQueue_attributes = {
   .name = "uart1RxDMAQueue"
+};
+/* Definitions for i2cReqQueue */
+osMessageQueueId_t i2cReqQueueHandle;
+const osMessageQueueAttr_t i2cReqQueue_attributes = {
+  .name = "i2cReqQueue"
+};
+/* Definitions for i2cRespQueue */
+osMessageQueueId_t i2cRespQueueHandle;
+const osMessageQueueAttr_t i2cRespQueue_attributes = {
+  .name = "i2cRespQueue"
 };
 /* USER CODE BEGIN PV */
 
@@ -98,9 +154,11 @@ void PeriphCommonClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_I2C4_Init(void);
 void StartDefaultTask(void *argument);
 void StarLEDTask(void *argument);
 void StartUart1Task(void *argument);
+void StartI2CTask(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -180,6 +238,7 @@ Error_Handler();
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
+  MX_I2C4_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -206,6 +265,12 @@ Error_Handler();
   /* creation of uart1RxDMAQueue */
   uart1RxDMAQueueHandle = osMessageQueueNew (8, 128, &uart1RxDMAQueue_attributes);
 
+  /* creation of i2cReqQueue */
+  i2cReqQueueHandle = osMessageQueueNew (8, 32, &i2cReqQueue_attributes);
+
+  /* creation of i2cRespQueue */
+  i2cRespQueueHandle = osMessageQueueNew (8, 8, &i2cRespQueue_attributes);
+
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
@@ -219,6 +284,9 @@ Error_Handler();
 
   /* creation of uart1Task */
   uart1TaskHandle = osThreadNew(StartUart1Task, NULL, &uart1Task_attributes);
+
+  /* creation of i2cTask */
+  i2cTaskHandle = osThreadNew(StartI2CTask, NULL, &i2cTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -331,6 +399,54 @@ void PeriphCommonClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief I2C4 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_I2C4_Init(void)
+{
+
+  /* USER CODE BEGIN I2C4_Init 0 */
+
+  /* USER CODE END I2C4_Init 0 */
+
+  /* USER CODE BEGIN I2C4_Init 1 */
+
+  /* USER CODE END I2C4_Init 1 */
+  hi2c4.Instance = I2C4;
+  hi2c4.Init.Timing = 0x10707DBC;
+  hi2c4.Init.OwnAddress1 = 0;
+  hi2c4.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c4.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c4.Init.OwnAddress2 = 0;
+  hi2c4.Init.OwnAddress2Masks = I2C_OA2_NOMASK;
+  hi2c4.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c4.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure Analogue filter
+  */
+  if (HAL_I2CEx_ConfigAnalogFilter(&hi2c4, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure Digital filter
+  */
+  if (HAL_I2CEx_ConfigDigitalFilter(&hi2c4, 0) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN I2C4_Init 2 */
+
+  /* USER CODE END I2C4_Init 2 */
+
 }
 
 /**
@@ -558,6 +674,39 @@ void StartUart1Task(void *argument)
 #endif
   }
   /* USER CODE END StartUart1Task */
+}
+
+/* USER CODE BEGIN Header_StartI2CTask */
+/**
+* @brief Function implementing the i2cTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartI2CTask */
+void StartI2CTask(void *argument)
+{
+  /* USER CODE BEGIN StartI2CTask */
+	osStatus_t  		status;
+	stI2C_Request_t		stReq;
+  /* Infinite loop */
+  for(;;)
+  {
+	//Build an i2c request
+	stReq.type = I2C_READ;
+
+	status = osMessageQueuePut (i2cReqQueueHandle, &stReq, 0, osWaitForever);
+	if(status != osOK)
+	{
+		//@todoHandle error here
+	}
+
+	//wait for response
+	status = osMessageQueueGet(i2cReqQueueHandle, &stReq, 0, osWaitForever);
+	//@todo parce data
+
+	 osDelay(1);
+  }
+  /* USER CODE END StartI2CTask */
 }
 
 /**
